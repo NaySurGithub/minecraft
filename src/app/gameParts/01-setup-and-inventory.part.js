@@ -3,7 +3,6 @@ AIR, GRASS, DIRT, STONE, COBBLESTONE, SAND,
 OAK_LOG, OAK_PLANKS, OAK_LEAVES, COAL_ORE, CRAFTING_TABLE, BED, LADDER, IRON_BLOCK, PUMPKIN, REDSTONE_DUST, REDSTONE_BLOCK, PISTON,
 GLASS, CHEST, TORCH, FARMLAND
 } = blockIds
-
 const app = document.getElementById('app')
 
 let settings = loadSettings()
@@ -18,12 +17,14 @@ const scene = new THREE.Scene()
 scene.fog = new THREE.Fog(0x87ceeb, 40, 120)
 
 const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 1000)
-
+const skyScene = new THREE.Scene()
+const skyCamera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 10)
+const clouds = new CloudSystem(skyScene)
 let atlas = buildAtlas()
 const material = new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true })
 const transparentMaterial = new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true, transparent: true, alphaTest: 0.3, side: THREE.DoubleSide})
 
-const dayNight = new DayNightCycle(scene, renderer)
+const dayNight = new DayNightCycle(scene, renderer, skyScene)
 const heldItem = new HeldItem(renderer, atlas, material)
 heldItem.resize(window.innerWidth, window.innerHeight)
 

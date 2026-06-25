@@ -8,6 +8,7 @@ import { computeChunkLightMap, computeChunkSkyMap } from './lightEngine.js'
 import { DEBUG_GENERATION, DEBUG_TEXTURES, debugLog } from '../debug/debug.js'
 import { Inventory, DoubleChestInventory } from '../inventory/inventory.js'
 import { ChestTileEntity, createTileEntityForBlock, createTileEntityFromData, tileEntityKey } from './tileEntities.js'
+import { FallingBlockSystem } from './FallingBlockSystem.js'
 
 function nextFrame() {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()))
@@ -20,6 +21,14 @@ function floorDiv(a, b) {
 export class World {
   constructor(scene, seed, atlas, material, transparentMaterial, options = {}) {
     this.scene = scene
+
+    this.fallingBlockSystem = new FallingBlockSystem(
+      this,
+      scene,
+      atlas,
+      material
+    )
+  
     this.seed = seed
     this.atlas = atlas
     this.material = material
@@ -42,6 +51,8 @@ export class World {
     this.tileEntities = new Map()
     this.removedTileEntities = new Map()
     this.loadOffsetCache = new Map()
+	this.blockMeta = new Map()
+	this._suppressPortalCleanup = false
     this._suppressPortalCleanup = false
   }
 
@@ -304,6 +315,17 @@ export class World {
     if (!chunk) return 0
     return chunk.getLevel(wx - cx * CHUNK_SIZE, wy, wz - cz * CHUNK_SIZE)
   }
+   getBlockMeta(wx, wy, wz) {
+  return this.blockMeta.get(`${wx},${wy},${wz}`) || null
+}
+
+setBlockMeta(wx, wy, wz, meta) {
+  this.blockMeta.set(`${wx},${wy},${wz}`, meta)
+}
+
+removeBlockMeta(wx, wy, wz) {
+  this.blockMeta.delete(`${wx},${wy},${wz}`)
+}
 
   setLevel(wx, wy, wz, n) {
     if (wy < 0 || wy >= CHUNK_HEIGHT) return
@@ -323,7 +345,13 @@ export class World {
     const lx = wx - cx * CHUNK_SIZE
     const lz = wz - cz * CHUNK_SIZE
     const previousId = chunk.get(lx, wy, lz)
-    chunk.setEdit(lx, wy, lz, id)
+
+if (id === AIR) {
+  this.removeBlockMeta(wx, wy, wz)
+}
+
+chunk.setEdit(lx, wy, lz, id)
+this.updateWallTorches(wx, wy, wz)
     chunk.lightDirty = true
     chunk.lightMap = null
     if (id === blockIds.WATER) this.setLevel(wx, wy, wz, 0)
@@ -373,6 +401,27 @@ export class World {
         this._isSettling = false
       }
     }
+	const name = blocks[id]?.name
+
+if (
+  name === 'wall_torch_north' ||
+  name === 'wall_torch_south' ||
+  name === 'wall_torch_east' ||
+  name === 'wall_torch_west'
+) {
+  let sx = wx
+  let sz = wz
+
+  if (name === 'wall_torch_north') sz += 1
+  if (name === 'wall_torch_south') sz -= 1
+  if (name === 'wall_torch_east') sx -= 1
+  if (name === 'wall_torch_west') sx += 1
+
+  if (!blocks[this.getBlock(sx, wy, sz)]?.solid) {
+    this.setBlock(wx, wy, wz, AIR)
+    return
+  }
+}
   }
 
   // Apply a host-sent block delta on the client. Behaviorally identical to
@@ -614,6 +663,34 @@ export class World {
     if (!b) return true
     return b.liquid === true || b.solid === false
   }
+  updateWallTorches(wx, wy, wz) {
+  const checks = [
+    [1,0,0],
+    [-1,0,0],
+    [0,0,1],
+    [0,0,-1]
+  ]
+
+  for (const [dx,dy,dz] of checks) {
+    const id = this.getBlock(wx + dx, wy + dy, wz + dz)
+    const name = blocks[id]?.name
+
+    if (!name) continue
+
+    let supportX = wx + dx
+    let supportZ = wz + dz
+
+    if (name === 'wall_torch_north') supportZ += 1
+    else if (name === 'wall_torch_south') supportZ -= 1
+    else if (name === 'wall_torch_east') supportX -= 1
+    else if (name === 'wall_torch_west') supportX += 1
+    else continue
+
+    if (!blocks[this.getBlock(supportX, wy, supportZ)]?.solid) {
+      this.setBlock(wx + dx, wy + dy, wz + dz, AIR)
+    }
+  }
+}
 
   settleBlock(wx, wy, wz) {
     const id = this.getBlock(wx, wy, wz)
@@ -623,10 +700,10 @@ export class World {
     let ty = wy
     while (ty > 0 && this.isPassable(wx, ty - 1, wz)) ty--
     if (ty === wy) return
-    this.setBlock(wx, wy, wz, AIR)
-    this.setBlock(wx, ty, wz, id)
+    this.fallingBlockSystem.start(wx, wy, wz, id)
     this.settleAbove(wx, wy, wz)
   }
+  
 
   settleAbove(wx, wy, wz) {
     let y = wy + 1
@@ -737,6 +814,8 @@ export class World {
     const start = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now()
     const frameBudgetMs = 4
     const loadLimit = Math.max(1, maxPerFrame || 1)
+	const dt = 1 / 60
+    this.fallingBlockSystem.update(dt)
     this.updateFluidTicks(4)
     this.updateFireSpread(8)
     const pcx = floorDiv(playerX, CHUNK_SIZE)

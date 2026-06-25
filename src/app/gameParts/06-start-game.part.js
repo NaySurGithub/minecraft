@@ -179,21 +179,40 @@ async function startGame(meta, savedData, netOptions = null) {
     if (!gamemode.takesFallDamage()) return
     if (d > 3) health.damage(Math.floor(d - 3))
   }
-  health.onChange((h) => {
-    if (h.dead) {
-      const deathEv = emitModEvent(new DeathEvent(player, { reason: 'health' }), { player, inventory, health, world })
-      if (deathEv.cancelled) return
-      if (deathOverlay) {
-        deathOverlay.style.display = 'flex'
-        if (document.pointerLockElement) document.exitPointerLock()
-        if (breakTimer) breakTimer.stop()
-      } else {
-        player.spawnAtSurface()
-        if (gamemode.isSurvival() && !activeWorldMeta.keepInventory) dropInventoryContents()
-        health.reset()
-      }
+health.onChange((h) => {
+  if (h.dead) {
+	  if (dropManager) {
+		  dropManager.canPickup = false
+		}
+	  
+    const deathEv = emitModEvent(
+      new DeathEvent(player, { reason: 'health' }),
+      { player, inventory, health, world }
+    )
+	
+
+    if (deathEv.cancelled) return
+
+    if (gamemode.isSurvival() && !activeWorldMeta.keepInventory) {
+      dropInventoryContents()
     }
-  })
+
+    if (deathOverlay) {
+      deathOverlay.style.display = 'flex'
+
+      if (document.pointerLockElement) {
+        document.exitPointerLock()
+      }
+
+      if (breakTimer) {
+        breakTimer.stop()
+      }
+    } else {
+      player.spawnAtSurface()
+      health.reset()
+    }
+  }
+})
   craftingTableUI.onClose = handleCraftingTableClose
   furnaceUI.onClose = handleCraftingTableClose
   configureBreakTimer()
@@ -354,8 +373,11 @@ async function startGame(meta, savedData, netOptions = null) {
       onRespawn: () => {
         deathOverlay.style.display = 'none'
         player.spawnAtSurface()
-        if (gamemode.isSurvival() && !activeWorldMeta.keepInventory) dropInventoryContents()
+       
         health.reset()
+		if (dropManager) {
+			dropManager.canPickup = true
+		}
         health.setSpawnProtection(5)
         const respawnEv = emitModEvent(new PlayerRespawnEvent(player, { worldId: activeWorldMeta.id }), { player, inventory, health, world })
         if (respawnEv.cancelled) return

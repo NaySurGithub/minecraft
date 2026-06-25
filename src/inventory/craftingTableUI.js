@@ -73,7 +73,7 @@ export class CraftingTableUI {
       this.hoverInfo.attach(cell, () => this.inventory.slots[i])
     }
 
-    for (let i = 9; i < this.inventory.size; i++) makeCell(i, invGrid)
+    for (let i = 9; i < 36; i++) makeCell(i, invGrid)
     for (let i = 0; i < 9; i++) makeCell(i, hotbarGrid)
 
     panel.appendChild(title)

@@ -328,9 +328,23 @@ function tryUseBoneMeal() {
   if (!canPlaceAt(world, player, x, y, z, stack.id, otherPlayers, thing)) return
   const event = emitModEvent(new BlockPlaceEvent({ x, y, z, blockId: stack.id, face: { x: hit.normal.x, y: hit.normal.y, z: hit.normal.z }, heldItem: { ...stack } }), { player, inventory, health, world })
   if (event.cancelled) return
-  world.setBlock(x, y, z, stack.id)
-  recordBlockPlaceAchievement(stack.id)
-  sounds.playPlace()
+
+let blockToPlace = stack.id
+
+// Torche murale
+if (blocks[stack.id]?.name === 'torch') {
+  if (hit.normal.x !== 0) {
+    blockToPlace = blocksByName.get('wall_torch_east')?.id || stack.id
+  }
+  else if (hit.normal.z !== 0) {
+    blockToPlace = blocksByName.get('wall_torch_north')?.id || stack.id
+  }
+}
+
+world.setBlock(x, y, z, blockToPlace)
+
+recordBlockPlaceAchievement(blockToPlace)
+sounds.playPlace()
 
   const placedDef = blocks[stack.id]
   if (placedDef?.name === 'chest' || placedDef?.name === 'ender_chest') {
@@ -480,6 +494,8 @@ function applySettings(nextSettings) {
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
+  skyCamera.aspect = window.innerWidth / window.innerHeight 
+  skyCamera.updateProjectionMatrix()                         
   renderer.setSize(window.innerWidth, window.innerHeight)
   heldItem.resize(window.innerWidth, window.innerHeight)
 })
@@ -553,8 +569,18 @@ function loop() {
   }
 
   dayNight.update(timeOfDay)
-  renderer.render(scene, camera)
-  heldItem.render()
+
+dayNight.update(timeOfDay)
+clouds.update(dt, daylightFactor(timeOfDay))  // ← add this
+
+renderer.autoClear = false
+renderer.clear()
+skyCamera.quaternion.copy(camera.quaternion)
+renderer.clearDepth()
+renderer.render(skyScene, skyCamera)
+renderer.render(scene, camera)
+renderer.autoClear = true
+heldItem.render()
 
   if (infoEl) {
     const status = multiplayerStatus ? '  |  ' + multiplayerStatus : ''

@@ -128,17 +128,48 @@ export class BlockModels {
     }
 
     const geo = getModelGeometry(def.model)
-    if (!geo) return
-    const mesh = new THREE.Mesh(geo, this.modelMaterial)
-    if (def.model === 'portal' && this.portalAxis(wx, wy, wz) === 'z') {
-      mesh.rotation.y = -Math.PI / 2
-      mesh.position.set(wx + 1, wy, wz)
-    } else {
-      mesh.position.set(wx, wy, wz)
-    }
-    mesh.frustumCulled = true
-    this.scene.add(mesh)
-    this.meshes.set(k, mesh)
+if (!geo) return
+
+const mesh = new THREE.Mesh(geo, this.modelMaterial)
+
+if (def.model === 'portal' && this.portalAxis(wx, wy, wz) === 'z') {
+  mesh.rotation.y = -Math.PI / 2
+  mesh.position.set(wx + 1, wy, wz)
+
+} else if (def.name === 'torch') {
+
+  const meta = this.world.getBlockMeta?.(wx, wy, wz)
+  const face = meta?.face || 'top'
+
+  const tilt = 0.42
+  const shift = 0.20
+
+  mesh.position.set(wx, wy, wz)
+
+  if (face === 'north') {
+    mesh.rotation.x = tilt
+    mesh.position.set(wx, wy, wz + shift)
+
+  } else if (face === 'south') {
+    mesh.rotation.x = -tilt
+    mesh.position.set(wx, wy, wz - shift)
+
+  } else if (face === 'east') {
+    mesh.rotation.z = tilt
+    mesh.position.set(wx - shift, wy, wz)
+
+  } else if (face === 'west') {
+    mesh.rotation.z = -tilt
+    mesh.position.set(wx + shift, wy, wz)
+  }
+
+} else {
+  mesh.position.set(wx, wy, wz)
+}
+
+mesh.frustumCulled = true
+this.scene.add(mesh)
+this.meshes.set(k, mesh)
   }
 
   portalAxis(wx, wy, wz) {

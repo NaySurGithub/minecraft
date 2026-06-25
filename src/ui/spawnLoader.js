@@ -18,7 +18,8 @@ export class SpawnLoader {
     this.gridSize = 0
   }
 
-  show(label = t('loadingWorld')) {
+  show(label = t('loadingWorld'), dimension = 'overworld') {
+	this.dimension = dimension
     if (this.overlay) this.hide()
     const overlay = document.createElement('div')
     overlay.className = 'spawn-loader'
@@ -49,26 +50,45 @@ export class SpawnLoader {
   }
 
   buildGrid(size) {
-    if (!this.gridEl) return
-    this.gridEl.innerHTML = ''
-    this.cells = []
-    this.gridSize = size
-    this.gridEl.style.gridTemplateColumns = 'repeat(' + size + ', 1fr)'
-    const total = size * size
-    for (let i = 0; i < total; i++) {
-      const cell = document.createElement('span')
-      cell.className = 'spawn-loader-cell'
-      cell.style.background = STAGE_COLORS.empty
-      this.gridEl.appendChild(cell)
-      this.cells.push(cell)
-    }
+  if (!this.gridEl) return
+
+  this.gridEl.innerHTML = ''
+  this.cells = []
+  this.gridSize = size
+
+  this.gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`
+
+  const total = size * size
+
+  const emptyColor =
+    this.dimension === 'nether'
+      ? '#5a1212' // rouge netherrack
+      : '#2b5f1f' // vert herbe
+
+  for (let i = 0; i < total; i++) {
+    const cell = document.createElement('span')
+    cell.className = 'spawn-loader-cell'
+    cell.style.background = emptyColor
+    this.gridEl.appendChild(cell)
+    this.cells.push(cell)
   }
+}
 
   setChunk(i, stage) {
-    const cell = this.cells[i]
-    if (!cell) return
-    cell.style.background = STAGE_COLORS[stage] || STAGE_COLORS.empty
-  }
+  const cell = this.cells[i]
+  if (!cell) return
+
+  const colors = this.dimension === 'nether'
+    ? {
+        empty: '#2b0b0b',
+        generating: '#5a1212',
+        meshing: '#8a2020',
+        done: '#b03030'
+      }
+    : STAGE_COLORS
+
+  cell.style.background = colors[stage] || colors.empty
+}
 
   setProgress(done, total, label) {
     if (label && this.statusEl) this.statusEl.textContent = label

@@ -21,26 +21,39 @@ export function daylightFactor(ticks) {
 }
 
 export class DayNightCycle {
-  constructor(scene, renderer) {
+  constructor(scene, renderer, skyScene) {
     this.scene = scene
     this.renderer = renderer
+    this.skyScene = skyScene ?? scene
     this.ambient = new THREE.AmbientLight(0xffffff, 1)
     this.sun = new THREE.DirectionalLight(0xffffff, 1)
     this.sun.position.set(0.5, 1, 0.3)
     this.sunMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1.5, 16, 16),
-      new THREE.MeshBasicMaterial({ color: 0xffee88 })
-    )
-    this.moonMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(1.1, 16, 16),
-      new THREE.MeshBasicMaterial({ color: 0xdfe8ff })
-    )
+  new THREE.SphereGeometry(1.5, 16, 16),
+  new THREE.MeshBasicMaterial({ 
+    color: 0xffee88,
+    depthWrite: false,   // ← add
+    depthTest: false     // ← add
+  })
+)
+this.moonMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(1.1, 16, 16),
+  new THREE.MeshBasicMaterial({ 
+    color: 0xdfe8ff,
+    depthWrite: false,   // ← add
+    depthTest: false     // ← add
+  })
+)
+
+// Render sun/moon first (behind clouds and everything else)
+this.sunMesh.renderOrder = -1   // ← add
+this.moonMesh.renderOrder = -1  // ← add
     this.sunMesh.frustumCulled = false
     this.moonMesh.frustumCulled = false
     scene.add(this.ambient)
     scene.add(this.sun)
-    scene.add(this.sunMesh)
-    scene.add(this.moonMesh)
+    this.skyScene.add(this.sunMesh)
+    this.skyScene.add(this.moonMesh)
     this._sky = new THREE.Color()
     this._fog = new THREE.Color()
     this.dimension = null
@@ -77,22 +90,22 @@ export class DayNightCycle {
     const raining = storm || this.weather === 'rain'
     const weatherDim = storm ? 0.42 : raining ? 0.68 : 1
     const angle = ((ticks % DAY_TICKS) / DAY_TICKS) * Math.PI * 2
-    const sunX = Math.cos(angle)
-    const sunY = Math.max(0.15, Math.sin(angle))
-    this.sun.position.set(sunX, sunY, 0.3)
-    if (this.sunMesh) this.sunMesh.position.set(sunX * 90, sunY * 90, -120)
-    if (this.sunMesh) this.sunMesh.visible = f > 0.05
-    if (this.moonMesh) {
-      const moonPhase = 1 - f
-      const moonX = -sunX
-      const moonY = Math.max(0.15, -Math.sin(angle))
-      this.moonMesh.position.set(moonX * 92, moonY * 92, -120)
-      this.moonMesh.visible = moonPhase > 0.05
-    }
-    // Keep global ambient very dim so vertex colors dominate underground.
+const sunX = Math.cos(angle)
+const sunY = Math.sin(angle)
+this.sun.position.set(sunX, sunY, 0.3)
+
+if (this.sunMesh) {
+  this.sunMesh.position.set(sunX * 40, sunY * 40, -2)
+  this.sunMesh.visible = sunY > -0.1   // visible when above horizon
+}
+
+if (this.moonMesh) {
+  const moonX = -sunX
+  const moonY = -sunY                  // exact opposite of sun
+  this.moonMesh.position.set(moonX * 40, moonY * 40, -2)
+  this.moonMesh.visible = moonY > -0.1 // visible when above horizon
+}
     this.ambient.intensity = this.nightVision ? 1.0 : (0.05 + 0.10 * f) * weatherDim
-    // Outdoor faces already carry high sky-light vertex colors, so the sun
-    // can stay comparatively strong without washing out caves.
     this.sun.intensity = this.nightVision ? 0.0 : (0.25 + 1.0 * f) * weatherDim
     this._sky.copy(NIGHT_SKY).lerp(DAY_SKY, f)
     this._fog.copy(NIGHT_FOG).lerp(DAY_FOG, f)
@@ -110,7 +123,7 @@ export class DayNightCycle {
   dispose() {
     this.scene.remove(this.ambient)
     this.scene.remove(this.sun)
-    if (this.sunMesh) this.scene.remove(this.sunMesh)
-    if (this.moonMesh) this.scene.remove(this.moonMesh)
+    if (this.sunMesh) this.skyScene.remove(this.sunMesh)
+    if (this.moonMesh) this.skyScene.remove(this.moonMesh)
   }
 }

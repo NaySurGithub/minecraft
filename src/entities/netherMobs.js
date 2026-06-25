@@ -135,7 +135,7 @@ export class Enderman extends MobIA {
     this.attackCooldown = 0
     this.teleportCooldown = 0
     this.rainDamageTimer = 0
-    this.drops = [{ item: 'ender_pearl', min: 0, max: 1, chance: 0.5 }]
+    this.drops = [{ item: 'ender_pearl', min: 0, max: 3, chance: 15.5 }]
     this.goalSelector.addGoal(new AttackGoal(this, {
       priority: 4,
       radius: 64,
@@ -181,7 +181,7 @@ export class Enderman extends MobIA {
     const dist = toHead.length()
     if (dist <= 0.001 || dist > 64) return false
     const dir = toHead.clone().normalize()
-    if (dir.dot(player.getForward()) < 0.975) return false
+    if (dir.dot(player.getForward()) < 0.99) return false
     const steps = Math.floor(dist / 0.5)
     for (let i = 1; i < steps; i++) {
       const p = eye.clone().addScaledVector(dir, i * 0.5)
@@ -192,7 +192,7 @@ export class Enderman extends MobIA {
     return true
   }
 
-  findTeleportSpot(world, radius = 32) {
+  findTeleportSpot(world, radius = 10) {
     for (let i = 0; i < 64; i++) {
       const x = Math.floor(this.position.x + (Math.random() * 2 - 1) * radius)
       const z = Math.floor(this.position.z + (Math.random() * 2 - 1) * radius)
@@ -231,7 +231,7 @@ export class Enderman extends MobIA {
     this.angry = true
     this.mouthOpenTimer = 2
     const result = super.damage(amount, fromX, fromZ)
-    if (!result && this._lastWorld && Math.random() < 0.85) this.teleport(this._lastWorld, this._lastPlayer)
+    if (!result && this._lastWorld && Math.random() < 0.15) this.teleport(this._lastWorld, this._lastPlayer)
     return result
   }
 

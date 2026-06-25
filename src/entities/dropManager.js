@@ -57,6 +57,7 @@ export class DropManager {
     this.fallbackMat = new THREE.MeshBasicMaterial({ vertexColors: true })
     this.itemMat = atlas ? new THREE.MeshBasicMaterial({ map: atlas.texture }) : this.fallbackMat
     this.onPickup = null
+	this.canPickup = true
   }
 
   _getGeometry(blockId) {
@@ -111,7 +112,7 @@ export class DropManager {
         d.dead = true
       }
 
-      if (!d.dead && this.inventory && d.canPickup(playerPos)) {
+      if (this.canPickup && !d.dead && this.inventory && d.canPickup(playerPos)) {
         const leftover = this.inventory.addItem(d.blockId, d.count)
         if (leftover < d.count) {
           const pickedUp = d.count - leftover

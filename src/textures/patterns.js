@@ -54,22 +54,48 @@ export const generators = {
     })
   },
   wool(size, color, seed) {
-    const rng = makeRng(seed)
-    const darker = shade(color, -18)
-    const lighter = shade(color, 18)
-    const fiber = (x, y) => Math.sin((x * 1.7 + y * 1.3) * 0.55 + seed * 0.01)
-    return fill(size, (x, y) => {
-      const n = (rng() - 0.5) * 28
-      const strand = fiber(x, y) * 10
-      const speck = rng() > 0.9 ? 10 : 0
-      const p = ((x + y * 3 + seed) % 5 === 0) ? -6 : 0
-      const edge = (x === 0 || y === 0 || x === size - 1 || y === size - 1) ? -10 : 0
-      const base = shade(color, n + strand + speck + p + edge)
-      if ((x + y) % 7 === 0) return mix(base, lighter, 0.22)
-      if ((x * y) % 11 === 0) return mix(base, darker, 0.12)
-      return base
-    })
-  },
+  const TILE_W = 4
+  const TILE_H = 2
+
+  const data = new Uint8Array(size * size * 4)
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const row = Math.floor(y / TILE_H)
+      const offset = (row % 2) * Math.floor(TILE_W / 2)
+      const lx = (x + offset) % size
+      const col = Math.floor(lx / TILE_W)
+
+      const isGroutX = (lx % TILE_W) === 0
+      const isGroutY = (y % TILE_H) === 0
+
+      // deterministic per-tile shade variation (no RNG dependency)
+      const hash = (row * 73856093) ^ (col * 19349663) ^ (seed * 83492791)
+      const tileShade = ((hash >> 3) & 0x3f) - 32  // -32 to +31
+
+      let brightness
+      if (isGroutX || isGroutY) {
+        brightness = -38  // dark grout lines
+      } else {
+        const innerX = (lx % TILE_W) - 1
+        const innerY = (y % TILE_H)
+        // top-left highlight, bottom-right shadow per tile
+        const highlight = (innerX === 0 && innerY === 0) ? 18
+                        : (innerX === TILE_W - 2 && innerY === TILE_H - 1) ? -12
+                        : 0
+        brightness = tileShade * 0.7 + highlight
+      }
+
+      const c = shade(color, brightness)
+      const i = (y * size + x) * 4
+      data[i]   = c[0]
+      data[i+1] = c[1]
+      data[i+2] = c[2]
+      data[i+3] = 255
+    }
+  }
+  return data
+},
   shiny(size, color, seed) {
     const rng = makeRng(seed)
     const dark = shade(color, -20)
@@ -219,6 +245,59 @@ export const generators = {
       return shade(color, wave + pulse + n)
     })
   },
+  fire(size, color, seed) {
+  const rng = makeRng(seed)
+
+  // 16x16 pixel art fire template (0=transparent, 1=dark red, 2=orange, 3=bright orange, 4=yellow, 5=white-yellow)
+  const T = [
+    [0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
+    [0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0],
+    [0,0,0,1,1,2,1,1,1,2,1,1,0,0,0,0],
+    [0,0,1,1,2,2,2,2,2,2,2,1,1,0,0,0],
+    [0,1,1,2,2,3,2,2,2,3,2,2,1,0,0,0],
+    [0,1,2,2,3,3,3,2,3,3,3,2,2,1,0,0],
+    [1,1,2,3,3,3,3,3,3,3,3,3,2,1,0,0],
+    [1,2,2,3,3,4,3,3,3,4,3,3,2,2,1,0],
+    [1,2,3,3,4,4,4,3,4,4,4,3,3,2,1,0],
+    [0,2,3,4,4,4,4,4,4,4,4,4,3,2,1,0],
+    [0,2,3,4,4,5,4,4,4,5,4,4,3,2,0,0],
+    [0,1,3,4,5,5,5,4,5,5,5,4,3,1,0,0],
+    [0,1,2,4,5,5,5,5,5,5,5,4,2,1,0,0],
+    [0,0,2,3,4,5,5,5,5,5,4,3,2,0,0,0],
+    [0,0,1,2,3,4,4,5,4,4,3,2,1,0,0,0],
+    [0,0,0,1,2,3,3,4,3,3,2,1,0,0,0,0],
+  ]
+
+  const palette = [
+    [0,   0,   0,   0  ], // 0 transparent
+    [139, 30,  0,   255], // 1 dark red
+    [200, 70,  0,   255], // 2 orange-red
+    [230, 110, 10,  255], // 3 orange
+    [245, 160, 20,  255], // 4 bright orange
+    [255, 220, 80,  255], // 5 yellow
+  ]
+
+  // scale from 16 to `size`
+  const scale = size / 16
+
+  return fill(size, (x, y) => {
+    const tx = Math.floor(x / scale)
+    const ty = Math.floor(y / scale)
+    const row = T[Math.min(ty, 15)]
+    const v = row ? (row[Math.min(tx, 15)] ?? 0) : 0
+
+    if (v === 0) return [0, 0, 0, 0]
+
+    const base = palette[v]
+    const n = (rng() - 0.5) * 18
+    return [
+      clamp8(base[0] + n),
+      clamp8(base[1] + n * 0.5),
+      clamp8(base[2]),
+      base[3]
+    ]
+  })
+},
   crafting_top(size, color, seed) {
     const rng = makeRng(seed)
     const dark = shade(color, -42)
@@ -254,6 +333,7 @@ export const generators = {
       return shade(color, n + line + stripe + notch)
     })
   },
+  
   glass(size, color, seed) {
     const rng = makeRng(seed)
     return fill(size, (x, y) => {
@@ -268,6 +348,60 @@ export const generators = {
       return [0, 0, 0, 0]
     })
   },
+  torch(size, color, seed) {
+  const stickColor  = [102, 76, 51]
+  const stickDark   = [76,  56, 36]
+  const flameYellow = [255, 214, 60]
+  const flameOrange = [240, 120, 20]
+  const flameDark   = [180, 60,  0]
+  const flameWhite  = [255, 240, 180]
+
+  // normalized stick center
+  const cx = Math.floor(size / 2)
+
+  return fill(size, (x, y) => {
+    const ny = y / size  // 0=top, 1=bottom
+
+    // flame zone: top 30% of texture
+    const flameY = size * 0.30
+    // stick zone: 30%–85%
+    const stickTop    = size * 0.30
+    const stickBottom = size * 0.85
+    const stickW = Math.max(2, Math.floor(size * 0.18))
+    const halfW  = Math.floor(stickW / 2)
+
+    // flame: full width at top, narrowing
+    if (y < flameY) {
+      const progress = y / flameY   // 0 at top, 1 at flame base
+      const halfFlame = Math.floor((size * 0.44) * (1 - progress * 0.55))
+      if (Math.abs(x - cx) > halfFlame) return [0, 0, 0, 0]
+      // core white center
+      if (Math.abs(x - cx) < halfFlame * 0.22 && progress < 0.35) return flameWhite
+      // inner yellow
+      if (Math.abs(x - cx) < halfFlame * 0.50) return shade(flameYellow, (0.5 - progress) * 30)
+      // outer orange
+      if (Math.abs(x - cx) < halfFlame * 0.80) return shade(flameOrange, (0.5 - progress) * 20)
+      return shade(flameDark, progress * 10)
+    }
+
+    // stick
+    if (y >= stickTop && y <= stickBottom) {
+      if (Math.abs(x - cx) > halfW) return [0, 0, 0, 0]
+      // left edge darker, right edge lighter (bevel)
+      const edge = (x === cx - halfW) ? -22 : (x === cx + halfW) ? 14 : 0
+      const stripe = Math.sin(y * 0.9) * 5
+      return shade(stickColor, edge + stripe)
+    }
+
+    // knob at stick bottom
+    const knobW = halfW + 1
+    if (y > stickBottom && y < stickBottom + size * 0.08) {
+      if (Math.abs(x - cx) <= knobW) return stickDark
+    }
+
+    return [0, 0, 0, 0]
+  })
+},
   chest(size, color, seed) {
     const rng = makeRng(seed)
     return fill(size, (x, y) => {
@@ -303,3 +437,5 @@ export const generators = {
     })
   },
 }
+
+  

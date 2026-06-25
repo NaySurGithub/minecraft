@@ -29,14 +29,11 @@ export function buildPauseOverlay(app, { onResume, onSettings, onQuit, onToggleP
   overlay.setAttribute('role', 'dialog')
   overlay.hidden = true
   overlay.innerHTML = `
-    <div class="pause-world-hud" aria-hidden="true">
-      <div class="pause-cloud pause-cloud-a"></div>
-      <div class="pause-cloud pause-cloud-b"></div>
+ 
       <div class="pause-crosshair"></div>
       <div class="pause-empty-hotbar">
         <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
-      <div class="pause-hand"></div>
     </div>
     <div class="pause-panel">
       <h1 class="pause-logo">${t('gameTitle')}</h1>

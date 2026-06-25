@@ -62,11 +62,38 @@ function buildLever() {
 }
 
 function buildTorch() {
-  const stick = buildPost(0.12, 0.625, 0.47, 0.32, 0.16)
-  const head = new THREE.BoxGeometry(0.18, 0.18, 0.18)
-  head.translate(0.5, 0.7, 0.5)
-  applyColor(head, 0.78, 0.16, 0.12)
-  return mergeGeometries([stick, head])
+  // Thin stick — narrow, centered in block, goes from floor up
+  const stick = new THREE.BoxGeometry(0.12, 0.55, 0.12)
+  stick.translate(0.5, 0.275, 0.5)
+  applyColor(stick, 0.42, 0.28, 0.12)
+
+  // Slightly wider top knob of the stick (the "wick base")
+  const knob = new THREE.BoxGeometry(0.16, 0.08, 0.16)
+  knob.translate(0.5, 0.59, 0.5)
+  applyColor(knob, 0.35, 0.22, 0.08)
+
+  // Flame layers — stacked cubes getting smaller and brighter toward top
+  // Outer flame (orange)
+  const flameOuter = new THREE.BoxGeometry(0.28, 0.18, 0.28)
+  flameOuter.translate(0.5, 0.69, 0.5)
+  applyColor(flameOuter, 0.95, 0.45, 0.02)
+
+  // Mid flame (bright orange-yellow)
+  const flameMid = new THREE.BoxGeometry(0.22, 0.16, 0.22)
+  flameMid.translate(0.5, 0.74, 0.5)
+  applyColor(flameMid, 1.0, 0.72, 0.04)
+
+  // Inner flame (yellow)
+  const flameInner = new THREE.BoxGeometry(0.16, 0.14, 0.16)
+  flameInner.translate(0.5, 0.79, 0.5)
+  applyColor(flameInner, 1.0, 0.88, 0.18)
+
+  // Core (near-white yellow center)
+  const flameCore = new THREE.BoxGeometry(0.10, 0.10, 0.10)
+  flameCore.translate(0.5, 0.83, 0.5)
+  applyColor(flameCore, 1.0, 0.97, 0.72)
+
+  return mergeGeometries([stick, knob, flameOuter, flameMid, flameInner, flameCore])
 }
 
 function buildDust() {

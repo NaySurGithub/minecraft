@@ -196,34 +196,71 @@ export class MinecraftMenu {
 
     const bottom = el('div', 'mc-menu-bottom')
     const actions = el('div', 'mc-world-actions')
-    const refreshActions = () => {
-      actions.innerHTML = ''
-      actions.style.display = this.selectedWorldId ? 'flex' : 'none'
-      if (!this.selectedWorldId) return
-      actions.appendChild(this.button(t('playSelectedWorld'), () => callbacks.play(this.selectedWorldId)))
-      actions.appendChild(this.button(t('delete'), () => {
-        if (!this.selectedWorldId) return
-        deleteWorld(this.selectedWorldId)
-        this.showWorldSelect(callbacks, mode)
-      }))
-      actions.appendChild(this.button(t('rename'), () => {
-        if (!this.selectedWorldId) return
-        const data = loadWorldData(this.selectedWorldId)
-        const name = window.prompt(t('renamePrompt'), data?.name || '')
-        if (!name || !name.trim()) return
-        renameWorld(this.selectedWorldId, name.trim())
-        this.showWorldSelect(callbacks, mode)
-      }))
-      if (callbacks.exportWorld) {
-        actions.appendChild(this.button('Export', () => callbacks.exportWorld(this.selectedWorldId)))
-      }
+    
+    const importBtn = callbacks.importWorld
+  ? this.button('Import', () => callbacks.importWorld())
+  : null
+
+const refreshActions = () => {
+  actions.innerHTML = ''
+
+  actions.style.display = this.selectedWorldId ? 'flex' : 'none'
+
+  if (importBtn) {
+    importBtn.style.display = this.selectedWorldId ? 'none' : ''
+  }
+
+  if (!this.selectedWorldId) return
+
+  actions.appendChild(this.button(
+    t('playSelectedWorld'),
+    () => callbacks.play(this.selectedWorldId)
+  ))
+
+  actions.appendChild(this.button(
+    t('delete'),
+    () => {
+      deleteWorld(this.selectedWorldId)
+      this.showWorldSelect(callbacks, mode)
     }
-    refreshActions()
-    bottom.appendChild(actions)
-    if (callbacks.importWorld) {
-      bottom.appendChild(this.button('Import', () => callbacks.importWorld()))
+  ))
+
+  actions.appendChild(this.button(
+    t('rename'),
+    () => {
+      const data = loadWorldData(this.selectedWorldId)
+      const name = window.prompt(
+        t('renamePrompt'),
+        data?.name || ''
+      )
+      if (!name?.trim()) return
+      renameWorld(this.selectedWorldId, name.trim())
+      this.showWorldSelect(callbacks, mode)
     }
-    bottom.appendChild(this.button(t('cancel'), () => this.showMain(callbacks)))
+  ))
+
+  if (callbacks.exportWorld) {
+    actions.appendChild(
+      this.button('Export',
+        () => callbacks.exportWorld(this.selectedWorldId)
+      )
+    )
+  }
+}
+
+refreshActions()
+
+bottom.appendChild(actions)
+
+if (importBtn) {
+  bottom.appendChild(importBtn)
+}
+
+bottom.appendChild(
+  this.button(t('cancel'),
+    () => this.showMain(callbacks)
+  )
+)
 
     this.root.appendChild(list)
     this.root.appendChild(bottom)

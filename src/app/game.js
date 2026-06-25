@@ -71,6 +71,7 @@ import { isReplaceable } from '../player/placement.js'
 import { sounds, setVolumeLevels } from '../sounds/soundManager.js'
 import { EffectsManager } from '../effects/effectsManager.js'
 import { EffectsUI } from '../effects/effectsUI.js'
+import { CloudSystem } from '../world/cloudSystem.js'
 
 import setupAndInventory from './gameParts/01-setup-and-inventory.part.js?raw'
 import worldWeatherDimensions from './gameParts/02-world-weather-dimensions.part.js?raw'
@@ -104,6 +105,7 @@ const runtimeDeps = {
   ChestUI,
   InventoryUI,
   Gamemode,
+  CloudSystem,
   canPlaceAt,
   BreakTimer,
   Hotbar,

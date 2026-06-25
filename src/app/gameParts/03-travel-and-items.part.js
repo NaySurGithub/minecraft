@@ -4,7 +4,7 @@ async function switchDimension(targetDimension) {
   const loader = new SpawnLoader(app)
   const transitionLabel = targetDimension === 'nether' ? 'Entering the Nether...' : 'Returning to the Overworld...'
   const startedAt = performance.now()
-  loader.show(transitionLabel)
+  loader.show(transitionLabel, targetDimension)
   await new Promise((resolve) => requestAnimationFrame(resolve))
 
   try {
@@ -255,6 +255,18 @@ function tryUseBucket() {
     return true
   }
   world.setBlock(px, py, pz, placeId)
+  if (placeId === blockIds.TORCH) {
+  let face = 'top'
+
+  if (hit.normal.y === 0) {
+    if (hit.normal.z === 1) face = 'south'
+    else if (hit.normal.z === -1) face = 'north'
+    else if (hit.normal.x === 1) face = 'east'
+    else if (hit.normal.x === -1) face = 'west'
+  }
+
+  world.setBlockMeta(px, py, pz, { face })
+}
   if (placeId === blockIds.WATER) world.setLevel(px, py, pz, 0)
   if (placeId === blockIds.LAVA) world.setLevel(px, py, pz, 0)
   if (blockModels) blockModels.sync(px, py, pz)
