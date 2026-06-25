@@ -1,0 +1,17 @@
+{
+  "name": "No Diamond Tx",
+  "author": "Codex",
+  "version": "1.0.0",
+  "packets": [
+    {
+      "type": "InventoryTransactionPacket",
+      "actions": [
+        { "type": "cancelIf", "field": "fromItem.id", "equals": "diamond" },
+        { "type": "cancelIf", "field": "toItem.id", "equals": "diamond" },
+        { "type": "cancelIf", "field": "heldItem.id", "equals": "diamond" },
+        { "type": "cancelIf", "field": "item1.id", "equals": "diamond" },
+        { "type": "cancelIf", "field": "item2.id", "equals": "diamond" }
+      ]
+    }
+  ]
+}

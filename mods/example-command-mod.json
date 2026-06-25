@@ -1,0 +1,50 @@
+{
+  "name": "Command Showcase Mod",
+  "author": "Codex",
+  "version": "1.0.0",
+  "description": "Example mod that adds a damage command, one block, one item, and one entity.",
+  "blocks": [
+    {
+      "name": "ruby_block",
+      "label": "Ruby Block",
+      "color": [196, 66, 95],
+      "pattern": "shiny",
+      "hardness": 4,
+      "tool": "pickaxe",
+      "drops": "ruby_block",
+      "category": "block"
+    }
+  ],
+  "items": [
+    {
+      "name": "ruby_gem",
+      "label": "Ruby Gem",
+      "color": [228, 94, 120],
+      "category": "item",
+      "stackSize": 64
+    }
+  ],
+  "mobs": [
+    {
+      "type": "ruby_slime",
+      "label": "Ruby Slime",
+      "color": [210, 70, 104],
+      "health": 12,
+      "height": 0.9,
+      "half": 0.45,
+      "walkSpeed": 1.05,
+      "drops": [
+        { "item": "ruby_gem", "min": 1, "max": 2, "chance": 0.85 }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "name": "damage",
+      "aliases": ["hurt"],
+      "type": "damage",
+      "description": "Damage a target player with /damage <target> <amount>.",
+      "success": "Damage applied."
+    }
+  ]
+}
