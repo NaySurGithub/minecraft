@@ -1,6 +1,7 @@
 import { GAME_MODE } from '../config/constants.js'
 import { deleteWorld, listWorlds, loadWorldData, renameWorld } from '../world/save.js'
 import { MultiplayerMenu } from './multiplayerMenu.js'
+import { ServerBrowser } from './serverBrowser.js'
 import { readModFile } from '../mods/modLoader.js'
 import { formatDate, setLanguage, t } from './translator.js'
 
@@ -155,6 +156,7 @@ export class MinecraftMenu {
     buttons.appendChild(this.button(t('newWorld'), () => this.showCreate(callbacks)))
 	buttons.appendChild(this.button(t('loadWorld'), () => this.showWorldSelect(callbacks)))
     buttons.appendChild(this.button(t('multiplayer'), () => new MultiplayerMenu(this).show(callbacks)))
+    buttons.appendChild(this.button(t('servers'), () => this.showServers(callbacks)))
     buttons.appendChild(this.button(t('options'), () => this.showOptions(callbacks)))
     buttons.appendChild(this.button(t('quitGame'), () => {
       window.location.href = 'https://snapcollege.42web.io/duel.html'
@@ -163,6 +165,10 @@ export class MinecraftMenu {
     this.root.appendChild(logoWrap)
     if (topControls.childElementCount) this.root.appendChild(topControls)
     this.root.appendChild(buttons)
+  }
+
+  showServers(callbacks) {
+    new ServerBrowser(this).show(callbacks)
   }
 
   showWorldSelect(callbacks, mode) {

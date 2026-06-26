@@ -5,10 +5,11 @@ export const messages = {
     french: 'Francais',
     english: 'English',
     gameTitle: 'NazzaAndNayCraft',
-    splash: 'Multijoueur bientot disponible !',
+    splash: 'Le jeu est open-source !',
     newWorld: 'Cree un monde',
     loadWorld: 'Charger un monde',
     multiplayer: 'Multijoueur',
+    servers: 'Serveurs',
     hostGame: 'Heberger une partie',
     joinGame: 'Rejoindre une partie',
     roomCode: 'Code du salon',
@@ -104,7 +105,20 @@ export const messages = {
     loadingWorldAria: 'Chargement du monde',
     youDied: 'Vous êtes mort !',
     respawn: 'Réapparaître',
-    titleScreen: 'Menu principal'
+    titleScreen: 'Menu principal',
+    // Server Browser
+    playMultiplayer: 'Jouer en multijoueur',
+    joinServer: 'Rejoindre le serveur',
+    directConnection: 'Connexion directe',
+    addServer: 'Ajouter un serveur',
+    editServer: 'Modifier le serveur',
+    refresh: 'Actualiser',
+    serverName: 'Nom du serveur',
+    serverAddress: 'Adresse du serveur',
+    connect: 'Connexion',
+    save: 'Sauvegarder',
+    cantConnect: 'Impossible de se connecter au serveur.',
+    noServers: 'Aucun serveur ajoute. Cliquez sur "Ajouter un serveur" pour commencer.'
   },
   en: {
     languageTitle: 'Choose your language',
@@ -112,10 +126,11 @@ export const messages = {
     french: 'French',
     english: 'English',
     gameTitle: 'NazzaAndNayCraft',
-    splash: 'Multiplayer coming soon!',
+    splash: 'Game is OpenSource!',
     newWorld: 'Create a world',
     loadWorld: 'Load World',
     multiplayer: 'Multiplayer',
+    servers: 'Servers',
     hostGame: 'Host Game',
     joinGame: 'Join Game',
     roomCode: 'Room Code',
@@ -211,6 +226,19 @@ export const messages = {
     loadingWorldAria: 'Loading world',
     youDied: 'You died!',
     respawn: 'Respawn',
-    titleScreen: 'Title Screen'
+    titleScreen: 'Title Screen',
+    // Server Browser
+    playMultiplayer: 'Play Multiplayer',
+    joinServer: 'Join Server',
+    directConnection: 'Direct Connection',
+    addServer: 'Add Server',
+    editServer: 'Edit Server',
+    refresh: 'Refresh',
+    serverName: 'Server Name',
+    serverAddress: 'Server Address',
+    connect: 'Connect',
+    save: 'Save',
+    cantConnect: "Can't connect to server.",
+    noServers: 'No servers added yet. Click "Add Server" to get started.'
   }
 }

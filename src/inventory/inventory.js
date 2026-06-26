@@ -1,5 +1,31 @@
 import { getThing } from '../items/itemRegistry.js'
 
+// --- Tamper hardening -------------------------------------------------
+// Lock every gameplay method onto the prototype as non-writable and
+// non-configurable. This stops the classic DevTools monkey-patch attack:
+//   inventory.addItem = () => {}            -> silently ignored / throws
+//   Inventory.prototype.addItem = () => {}  -> throws (can't redefine)
+// We do this once, right after the class body, instead of scattering
+// Object.freeze calls through the methods themselves.
+function lockMethods(Klass, names) {
+  for (const name of names) {
+    const fn = Klass.prototype[name]
+    if (typeof fn !== 'function') continue
+    Object.defineProperty(Klass.prototype, name, {
+      value: fn,
+      writable: false,
+      configurable: false,
+      enumerable: false
+    })
+  }
+  Object.freeze(Klass.prototype)
+}
+
+const GUARDED_METHODS = [
+  'onChange', 'emit', 'stackSizeOf', 'addItem', 'removeAt', 'countOf',
+  'consume', 'swap', 'merge', 'clear', 'serialize', 'load'
+]
+
 export class Inventory {
   constructor(size) {
     this.size = size || 36
@@ -20,6 +46,11 @@ export class Inventory {
     return b ? b.stackSize : 64
   }
 
+  // NOTE: addItem/removeAt/consume/swap/merge/clear/load are the
+  // *local* (trusted-context) mutation API. In multiplayer client mode
+  // these must not be called directly off the back of player input —
+  // see net/inventoryIntent.js, which routes pickups/crafting through
+  // the host for validation instead of mutating this object directly.
   addItem(id, count) {
     let remaining = count
     const max = this.stackSizeOf(id)
@@ -124,6 +155,8 @@ export class Inventory {
   }
 }
 
+lockMethods(Inventory, GUARDED_METHODS)
+
 export class DoubleChestInventory extends Inventory {
   constructor(left, right) {
     super(54)
@@ -175,3 +208,4 @@ export class DoubleChestInventory extends Inventory {
   }
 }
 
+lockMethods(DoubleChestInventory, ['destroy'])

@@ -24,6 +24,14 @@ export const MSG = {
   CHUNK_VISIBILITY: 'chunkVisibility',
   MOD_PACKET: 'modPacket',
 
+  // Client -> Host: authoritative-inventory intent packets.
+  // The client never sends a finished inventory state for these cases;
+  // it asks for an action and waits for the host to confirm it via
+  // INVENTORY_SET / INVENTORY_DENY.
+  PICKUP_REQUEST: 'pickupRequest',     // { dropId }                 pick up a world item drop
+  CRAFT_REQUEST: 'craftRequest',       // { recipeId, fromIndexes }  craft using a known recipe
+  GAMEMODE_REQUEST: 'gamemodeRequest', // { mode }                   ask to change own gamemode (host may allow/deny based on op status)
+
   // Host -> Client
   WELCOME: 'welcome',
   CHUNK_DATA: 'chunkData',
@@ -31,13 +39,19 @@ export const MSG = {
   BLOCK_UPDATES: 'blockUpdates',
   SNAPSHOT: 'snapshot',
   INVENTORY_SET: 'inventorySet',
+  INVENTORY_DENY: 'inventoryDeny',     // { reason } - rejected pickup/craft/etc, client should not apply it locally
+  GAMEMODE_SET: 'gamemodeSet',         // { mode } - authoritative gamemode push, always wins over local state
   HEALTH_SET: 'healthSet',
   PEER_LEFT: 'peerLeft',
   CHEST_OPEN: 'chestOpen',
   CHEST_CLOSE: 'chestClose',
   CHEST_UPDATE: 'chestUpdate',
   CHEST_FACING: 'chestFacing',
-  TELEPORT: 'teleport'
+  TELEPORT: 'teleport',
+
+  // Server Browser ping (lightweight, no full handshake)
+  STATUS: 'status',
+  STATUS_RESPONSE: 'statusResponse'
 }
 
 export const PROTOCOL_VERSION = 1

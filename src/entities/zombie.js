@@ -16,7 +16,7 @@ const ZOMBIE_GLB_URL = zombieGlbUrl
 // usually swaps to the GLB within a frame or two of spawning.
 loadMobModel(ZOMBIE_GLB_URL).catch((err) => console.warn('zombie.glb load failed', err))
 
-const ZOMBIE_SWORD = getThingByName('iron_sword') || defineItem('iron_sword', { label: 'Epee en fer', stackSize: 1, color: [210, 210, 220], category: 'tool', toolKind: 'sword' })
+const ZOMBIE_SWORD = getThingByName('iron_sword') || defineItem('iron_sword', { label: 'Iron Sword', stackSize: 1, color: [210, 210, 220], category: 'tool', toolKind: 'sword' })
 
 export class Zombie extends MobIA {
   constructor(x, y, z) {

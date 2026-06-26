@@ -34,6 +34,7 @@ import { buildDeathOverlay } from '../ui/deathUI.js'
 import { RedstoneEngine } from '../redstone/index.js'
 import { createPrompts } from './prompts.js'
 import { ClientSession } from '../net/clientSession.js'
+import { DedicatedClientSession } from '../net/dedicatedClient.js'
 import { HostSession } from '../net/hostSession.js'
 import { RemoteRenderers } from '../net/remoteRenderers.js'
 import { MSG } from '../net/protocol.js'
@@ -133,6 +134,7 @@ const runtimeDeps = {
   RedstoneEngine,
   createPrompts,
   ClientSession,
+  DedicatedClientSession,
   HostSession,
   RemoteRenderers,
   MSG,

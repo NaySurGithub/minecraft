@@ -24,6 +24,18 @@ const menuCallbacks = {
       savedAt: now
     }, null, { mode: 'client', roomCode })
   },
+  joinDedicated: (address, port, serverName) => {
+    const now = new Date().toISOString()
+    startGame({
+      id: 'dedicated_' + address + '_' + port,
+      name: serverName || 'Dedicated Server',
+      seed: 'dedicated',
+      gameMode: GAME_MODE.SURVIVAL,
+      createdAt: now,
+      openedAt: now,
+      savedAt: now
+    }, null, { mode: 'dedicated', address, port })
+  },
   getWorldMods: () => activeWorldMeta?.mods || [],
   addWorldMod: (manifest) => {
     if (!activeWorldMeta) return false

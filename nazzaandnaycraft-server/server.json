@@ -1,0 +1,12 @@
+{
+  "port": 25565,
+  "maxPlayers": 20,
+  "worldName": "world",
+  "gamemode": "survival",
+  "difficulty": "normal",
+  "pvp": true,
+  "whitelist": false,
+  "motd": "A NazzaNayCraft Server",
+  "spawnProtection": 16,
+  "viewDistance": 10
+}

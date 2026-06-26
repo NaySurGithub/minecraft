@@ -54,7 +54,7 @@ async function startGame(meta, savedData, netOptions = null) {
   dayNight.setWeather(weather)
   dayNight.update(timeOfDay)
   updateWeatherOverlay()
-  world.remote = multiplayerMode === 'client'
+  world.remote = multiplayerMode === 'client' || multiplayerMode === 'dedicated'
   blockModels = new BlockModels(scene, world, material)
   globalThis.blockModels = blockModels
   redstone = new RedstoneEngine(world)
@@ -276,6 +276,17 @@ health.onChange((h) => {
       }
     })
     multiplayerStatus = t('joiningRoom') + netOptions.roomCode
+  } else if (netOptions?.mode === 'dedicated') {
+    multiplayerMode = 'client' // dedicated uses same client logic as P2P client
+    netSession = new DedicatedClientSession(multiplayerContext(), netOptions.address, netOptions.port, {
+      onStatus: (type, value) => {
+        if (type === 'connected') multiplayerStatus = 'Connecting to ' + netOptions.address + ':' + netOptions.port + '...'
+        if (type === 'welcome') multiplayerStatus = 'Connected to dedicated server'
+        if (type === 'disconnected') multiplayerStatus = 'Disconnected from server'
+        if (type === 'error') multiplayerStatus = 'Connection error: ' + (value?.message || String(value || 'unknown'))
+      }
+    })
+    multiplayerStatus = 'Connecting to ' + netOptions.address + ':' + netOptions.port + '...'
   }
   const device = await prompts.chooseDevice()
   currentDevice = device

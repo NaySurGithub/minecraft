@@ -5,10 +5,63 @@ import { executeChatCommand } from '../mods/commandBus.js'
 import { emitModEvent, emitModPacket } from '../mods/eventBus.js'
 import { PacketSendEvent } from '../mods/events/PacketSendEvent.js'
 import { PacketReceiveEvent } from '../mods/events/PacketReceiveEvent.js'
+import { getThing } from '../items/itemRegistry.js'
 
 const ATTACK_REACH = 4.2
 const ATTACK_DOT = 0.88
 const ATTACK_DAMAGE = 3
+const MAX_INVENTORY_SLOTS = 64            // generous ceiling; real inventories are 36-54
+const MAX_STACK_HARD_CAP = 9999           // absolute sanity ceiling regardless of item type
+const INPUT_RATE_LIMIT_MS = 40            // ~25/sec ceiling on INPUT packets per client
+const INVENTORY_GROWTH_RATE_LIMIT_MS = 250 // throttle how often a client's claimed total may jump up
+
+// --- Anti-tamper: validate a client-reported inventory snapshot --------
+// The client sends its full inventory every tick purely for cosmetic use
+// today (rendering armor on other players, restoring on reconnect). We
+// never trust it as a grant of items: anything that doesn't correspond
+// to a real, known item/block id, or that exceeds sane stack sizes, is
+// stripped out here so it can never leak into snapshots or saved state
+// just because a player edited it locally (monkey-patch or otherwise).
+function sanitizeClientInventory(raw) {
+  if (!Array.isArray(raw)) return null
+  const out = []
+  for (let i = 0; i < raw.length && i < MAX_INVENTORY_SLOTS; i++) {
+    const slot = raw[i]
+    if (!slot || typeof slot !== 'object') {
+      out.push(null)
+      continue
+    }
+    const id = Number(slot.id)
+    let count = Math.floor(Number(slot.count))
+    if (!Number.isFinite(id) || !Number.isFinite(count) || count <= 0) {
+      out.push(null)
+      continue
+    }
+    const def = getThing(id)
+    if (!def) {
+      // Unknown item id -- not something the registry could ever have
+      // granted legitimately. Drop it rather than let an invented id
+      // propagate to other clients or into saved state.
+      out.push(null)
+      continue
+    }
+    const max = Math.min(def.stackSize || 64, MAX_STACK_HARD_CAP)
+    if (count > max) count = max
+    out.push({ id, count })
+  }
+  return out
+}
+
+// Sum of (count) across all slots -- a cheap "did this inventory just
+// get a lot richer" signal used for the growth rate limit below.
+function inventoryTotal(slots) {
+  if (!Array.isArray(slots)) return 0
+  let total = 0
+  for (const s of slots) {
+    if (s && Number.isFinite(s.count)) total += s.count
+  }
+  return total
+}
 
 function forwardOf(player) {
   const yaw = player?.yaw || 0
@@ -62,7 +115,17 @@ export class HostSession {
 
   _accept(conn) {
     const id = 'pending_' + this.nextClientId++
-    const client = { id, conn, key: id, name: 'Player ' + (this.nextClientId - 1), state: null }
+    const client = {
+      id,
+      conn,
+      key: id,
+      name: 'Player ' + (this.nextClientId - 1),
+      state: null,
+      _lastInputAt: 0,
+      _lastInventoryTotal: 0,
+      _lastInventoryGrowthAt: 0,
+      _flagCount: 0
+    }
     const origSend = conn.send.bind(conn)
     conn.send = (msg) => {
       const packet = msg && typeof msg === 'object' ? msg : { t: msg }
@@ -119,8 +182,7 @@ export class HostSession {
         })
       },
       [MSG.INPUT]: (client, msg) => {
-        client.state = msg.state || null
-        this.saveClientState(client)
+        this.handleInput(client, msg)
       },
       [MSG.BREAK_BLOCK]: (_client, msg) => this.breakBlock(msg.x, msg.y, msg.z),
       [MSG.BREAK_RAY]: (_client, msg) => this.breakRay(msg.eye, msg.dir),
@@ -208,8 +270,69 @@ export class HostSession {
       },
       [MSG.MOD_PACKET]: (client, msg) => {
         emitModPacket(msg.packetType || msg.type, msg.payload || {}, this.commandContext(client))
+      },
+      [MSG.GAMEMODE_REQUEST]: (client, msg) => this.handleGamemodeRequest(client, msg)
+    }
+  }
+
+  // Clients never set their own gamemode locally and have it count for
+  // anything authoritative -- they ask, the host decides, and the host
+  // pushes GAMEMODE_SET back (to the requester only, today's allowed
+  // modes are self-serve; tighten this check if you add an op-only mode).
+  handleGamemodeRequest(client, msg) {
+    const mode = msg && msg.mode
+    if (mode !== 'survival' && mode !== 'creative' && mode !== 'spectator') return
+    client.gamemode = mode
+    client.conn.send({ t: MSG.GAMEMODE_SET, mode })
+  }
+
+  // Validate and rate-limit a client's reported input/state. This is
+  // the chokepoint that stops a tampered local inventory (whether from
+  // monkey-patching addItem or just hand-editing the object/slots in
+  // DevTools) from being trusted as real game state. Anything that
+  // doesn't pass sanitizeClientInventory() is silently dropped, never
+  // echoed back to other clients and never written into savedPlayers.
+  handleInput(client, msg) {
+    const now = Date.now()
+    if (now - client._lastInputAt < INPUT_RATE_LIMIT_MS) return
+    client._lastInputAt = now
+
+    const state = msg && typeof msg === 'object' ? msg.state : null
+    if (!state || typeof state !== 'object') {
+      client.state = null
+      return
+    }
+
+    const cleanInventory = sanitizeClientInventory(state.inventory)
+    // Default to whatever we last accepted; only replace it below if
+    // this tick's claim passes both sanitization and the growth check.
+    let acceptedInventory = client.state?.inventory ?? null
+
+    if (state.inventory != null && cleanInventory == null) {
+      // Malformed payload entirely (not even an array) - ignore this
+      // tick's inventory claim rather than accept garbage.
+      client._flagCount++
+    } else if (cleanInventory) {
+      const total = inventoryTotal(cleanInventory)
+      if (total > client._lastInventoryTotal && now - client._lastInventoryGrowthAt < INVENTORY_GROWTH_RATE_LIMIT_MS) {
+        // Inventory total is climbing faster than legitimate pickups or
+        // crafting could plausibly produce. Reject this tick's claim
+        // outright and keep using the last trusted inventory instead.
+        client._flagCount++
+      } else {
+        if (total > client._lastInventoryTotal) client._lastInventoryGrowthAt = now
+        client._lastInventoryTotal = total
+        acceptedInventory = cleanInventory
       }
     }
+
+    client.state = {
+      player: state.player || null,
+      input: state.input || null,
+      inventory: acceptedInventory,
+      health: state.health || null
+    }
+    this.saveClientState(client)
   }
 
   saveClientState(client) {
