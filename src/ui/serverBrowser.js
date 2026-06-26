@@ -34,7 +34,8 @@ function pingServer(address, port) {
 
     let ws
     try {
-      ws = new WebSocket('ws://' + address + ':' + port)
+     let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+     ws = new WebSocket(protocol + address + ':' + port)
     } catch (e) {
       done(null)
       return
