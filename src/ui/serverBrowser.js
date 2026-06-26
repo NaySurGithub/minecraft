@@ -34,8 +34,17 @@ function pingServer(address, port) {
 
     let ws
     try {
-     let protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
-     ws = new WebSocket(protocol + address + ':' + port)
+     const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://'
+
+	let url
+
+	if (address.includes('onrender.com')) {
+	url = protocol + address
+	} else {
+	url = protocol + address + ':' + port
+	}
+
+	ws = new WebSocket(url)
     } catch (e) {
       done(null)
       return
