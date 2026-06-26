@@ -14,6 +14,8 @@ npm install
 
 ```bash
 npm start
+or
+node example.js
 ```
 
 Or with custom config:
