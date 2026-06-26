@@ -10,12 +10,22 @@
     "start": "node bin/server.js",
     "dev": "node bin/server.js --dev"
   },
-  "keywords": ["minecraft", "multiplayer", "server", "game"],
+  "keywords": [
+    "minecraft",
+    "multiplayer",
+    "server",
+    "game"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.14.0",
-    "uuid": "^9.0.0"
+    "jszip": "^3.10.1",
+    "mqtt": "^5.15.1",
+    "peerjs": "^1.5.5",
+    "simplex-noise": "^4.0.3",
+    "three": "^0.185.0",
+    "uuid": "^9.0.0",
+    "ws": "^8.14.0"
   },
   "optionalDependencies": {
     "better-sqlite3": "^11.10.0",
