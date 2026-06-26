@@ -6,6 +6,7 @@ import { Zombie } from './zombie.js'
 import { Creeper } from './creeper.js'
 import { MobIA } from './MobIA.js'
 import { getThingByName, defineSpawnEgg } from '../items/itemRegistry.js'
+import { mobDefs, mobDefsByType } from '../../packages/game-core/src/content.js'
 import {
   Blaze,
   Enderman,
@@ -82,22 +83,13 @@ export function defineMob(type, def) {
   return true
 }
 
-defineSpawnEgg('sheep_spawn_egg', { label: 'Sheep Spawn Egg', color: [235, 235, 235], spawnMob: 'sheep' })
-defineSpawnEgg('villager_spawn_egg', { label: 'Villager Spawn Egg', color: [183, 145, 101], spawnMob: 'villager' })
-defineSpawnEgg('golem_spawn_egg', { label: 'Golem Spawn Egg', color: [183, 191, 172], spawnMob: 'golem' })
-defineSpawnEgg('zombie_spawn_egg', { label: 'Zombie Spawn Egg', color: [108, 150, 88], spawnMob: 'zombie' })
-defineSpawnEgg('creeper_spawn_egg', { label: 'Creeper Spawn Egg', color: [76, 175, 80], spawnMob: 'creeper' })
-defineSpawnEgg('skeleton_spawn_egg', { label: 'Skeleton Spawn Egg', color: [210, 210, 210], spawnMob: 'skeleton' })
-defineSpawnEgg('enderman_spawn_egg', { label: 'Enderman Spawn Egg', color: [28, 24, 34], spawnMob: 'enderman' })
-defineSpawnEgg('ghast_spawn_egg', { label: 'Ghast Spawn Egg', color: [232, 226, 222], spawnMob: 'ghast' })
-defineSpawnEgg('zombie_piglin_spawn_egg', { label: 'Zombie Piglin Spawn Egg', color: [199, 154, 141], spawnMob: 'zombie_piglin' })
-defineSpawnEgg('blaze_spawn_egg', { label: 'Blaze Spawn Egg', color: [255, 168, 36], spawnMob: 'blaze' })
-defineSpawnEgg('magma_cube_spawn_egg', { label: 'Magma Cube Spawn Egg', color: [132, 40, 28], spawnMob: 'magma_cube' })
-defineSpawnEgg('wither_skeleton_spawn_egg', { label: 'Wither Skeleton Spawn Egg', color: [42, 42, 48], spawnMob: 'wither_skeleton' })
-defineSpawnEgg('piglin_spawn_egg', { label: 'Piglin Spawn Egg', color: [212, 154, 117], spawnMob: 'piglin' })
-defineSpawnEgg('piglin_brute_spawn_egg', { label: 'Piglin Brute Spawn Egg', color: [189, 121, 85], spawnMob: 'piglin_brute' })
-defineSpawnEgg('hoglin_spawn_egg', { label: 'Hoglin Spawn Egg', color: [155, 107, 88], spawnMob: 'hoglin' })
-defineSpawnEgg('strider_spawn_egg', { label: 'Strider Spawn Egg', color: [156, 69, 97], spawnMob: 'strider' })
+for (const mob of mobDefs || []) {
+  defineSpawnEgg(`${mob.type}_spawn_egg`, {
+    label: `${mob.label || mob.type} Spawn Egg`,
+    color: mob.spawnEgg || mob.color || [220, 220, 220],
+    spawnMob: mob.type
+  })
+}
 
 export class MobManager {
   constructor(scene, world, dropManager) {
@@ -113,6 +105,16 @@ export class MobManager {
     if (!Ctor) return null
     const mob = new Ctor(x, y, z)
     mob.id = id || 'mob_' + this.nextId++
+    const shared = mobDefsByType[type]
+    if (shared) {
+      if (typeof shared.health === 'number') mob.maxHealth = shared.health
+      if (typeof shared.walkSpeed === 'number') mob.walkSpeed = shared.walkSpeed
+      if (typeof shared.half === 'number') mob.half = shared.half
+      if (typeof shared.height === 'number') mob.height = shared.height
+      if (Array.isArray(shared.drops)) mob.drops = shared.drops
+      if (Array.isArray(shared.goals)) mob.sharedGoals = shared.goals
+      mob.type = shared.type || mob.type
+    }
     if (mob.mesh) this.scene.add(mob.mesh)
     mob.onDeath = (m) => this._spawnDrops(m)
     this.mobs.push(mob)

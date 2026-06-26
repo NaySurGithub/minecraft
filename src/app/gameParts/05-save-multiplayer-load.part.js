@@ -76,6 +76,16 @@ function saveAndQuitToMenu() {
   menu.showMain(menuCallbacks)
 }
 
+function showDisconnectErrorPage(reason = 'Disconnected from server') {
+  if (paused) setPaused(false)
+  cleanupGameUi()
+  const loader = new SpawnLoader(app)
+  loader.showError(reason, 'Return', () => {
+    loader.hide()
+    menu.showMain(menuCallbacks)
+  })
+}
+
 function cleanupGameUi() {
   suffocationOverlay = null
   if (achievementManager) achievementManager.dispose()
@@ -146,6 +156,9 @@ function multiplayerContext() {
       remoteRenderers.syncPlayers(snapshot.players, localId)
       remoteRenderers.syncDrops(snapshot.drops)
       remoteRenderers.syncMobs(snapshot.mobs)
+    },
+    onDisconnect: () => {
+      showDisconnectErrorPage('Disconnected from server')
     }
   }
 }

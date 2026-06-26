@@ -34,6 +34,8 @@ export class ClientSession {
     this.chunkWaiters = []
     this.chunkRequestTimer = 0
     this.onStatus = options.onStatus || null
+    this.connectionFailed = false
+    this.disconnected = false
     this.welcome = new Promise((resolve) => { this._resolveWelcome = resolve })
     this.handlers = this.createHandlers()
     this.session = connectClient(roomCode, {
@@ -47,10 +49,16 @@ export class ClientSession {
           return origSend(packet)
         }
         conn.onMessage = (msg) => this._message(msg)
+        conn.onClose = () => {
+          this._handleDisconnect()
+        }
         conn.send({ t: MSG.HELLO, clientId: this.clientId, name: options.name || getDefaultClientName(this.clientId) })
         this._status('connected', roomCode)
       },
-      onError: (err) => this._status('error', err)
+      onError: (err) => {
+        this.connectionFailed = true
+        this._status('error', err)
+      }
     })
   }
 
@@ -252,7 +260,7 @@ export class ClientSession {
     const player = this.context.player
     if (!player || !this.connection) return
     this.chunkRequestTimer += dt
-    if (this.chunkRequestTimer >= 1) {
+    if (this.chunkRequestTimer >= 0.25) {
       this.chunkRequestTimer = 0
       this.requestNearbyChunks(player)
     }
@@ -278,7 +286,7 @@ export class ClientSession {
     if (!world) return
     const pcx = Math.floor(player.position.x / CHUNK_SIZE)
     const pcz = Math.floor(player.position.z / CHUNK_SIZE)
-    const rd = Math.min(world.renderDistance || 4, 4)
+    const rd = Math.min((world.renderDistance || 4) + 1, 8)
     const visible = []
     for (let dz = -rd; dz <= rd; dz++) {
       for (let dx = -rd; dx <= rd; dx++) {
@@ -320,13 +328,16 @@ export class ClientSession {
       const waiter = {
         coords,
         onProgress,
-        resolve: () => {
+        resolved: false,
+        resolve: (ok) => {
+          if (waiter.resolved) return
+          waiter.resolved = true
           clearTimeout(waiter.timeout)
-          resolve()
+          resolve(ok)
         },
         timeout: null
       }
-      waiter.timeout = setTimeout(waiter.resolve, timeoutMs)
+      waiter.timeout = setTimeout(() => waiter.resolve(false), timeoutMs)
       this.chunkWaiters.push(waiter)
       this.flushChunkWaiters()
     })
@@ -342,9 +353,20 @@ export class ClientSession {
       if (waiter.onProgress) waiter.onProgress(done, waiter.coords.length)
       if (done >= waiter.coords.length) {
         this.chunkWaiters.splice(i, 1)
-        waiter.resolve()
+        waiter.resolve(true)
+      } else if (waiter.retries > 0 && done === 0 && waiter.retries >= 3) {
+        this.chunkWaiters.splice(i, 1)
+        waiter.resolve(false)
       }
     }
+  }
+
+  _handleDisconnect() {
+    this.connected = false
+    this.disconnected = true
+    if (!this.id) this.connectionFailed = true
+    if (!this.id) this._resolveWelcome?.(null)
+    this.context.onDisconnect?.()
   }
 
   destroy() {

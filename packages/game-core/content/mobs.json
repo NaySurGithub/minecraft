@@ -1,0 +1,125 @@
+[
+  {
+    "type": "creeper",
+    "label": "Creeper",
+    "half": null,
+    "height": null,
+    "walkSpeed": null,
+    "health": null,
+    "drops": [
+      {
+        "item": "gunpowder",
+        "min": 1,
+        "max": 2
+      }
+    ],
+    "goals": []
+  },
+  {
+    "type": "enderman",
+    "label": "Enderman",
+    "half": 0.32,
+    "height": 2.9,
+    "walkSpeed": 1.8,
+    "health": 40,
+    "drops": [
+      {
+        "item": "ender_pearl",
+        "min": 0,
+        "max": 3,
+        "chance": 15.5
+      }
+    ],
+    "goals": []
+  },
+  {
+    "type": "ghast",
+    "label": "Ghast",
+    "half": 1,
+    "height": 1.4,
+    "walkSpeed": null,
+    "health": 10,
+    "drops": [
+      {
+        "item": "gunpowder",
+        "min": 0,
+        "max": 2
+      },
+      {
+        "item": "ghast_tear",
+        "min": 1,
+        "max": 1,
+        "chance": 0.25
+      }
+    ],
+    "goals": []
+  },
+  {
+    "type": "golem",
+    "label": "Golem",
+    "half": null,
+    "height": null,
+    "walkSpeed": null,
+    "health": null,
+    "drops": [
+      {
+        "item": "raw_iron",
+        "min": 3,
+        "max": 5
+      }
+    ],
+    "goals": []
+  },
+  {
+    "type": "sheep",
+    "label": "Sheep",
+    "half": null,
+    "height": null,
+    "walkSpeed": null,
+    "health": null,
+    "drops": [],
+    "goals": []
+  },
+  {
+    "type": "strider",
+    "label": "Strider",
+    "half": 0.42,
+    "height": 1.45,
+    "walkSpeed": 0.9,
+    "health": 20,
+    "drops": [],
+    "goals": []
+  },
+  {
+    "type": "villager",
+    "label": "Villager",
+    "half": null,
+    "height": null,
+    "walkSpeed": null,
+    "health": null,
+    "drops": [],
+    "goals": []
+  },
+  {
+    "type": "zombie",
+    "label": "Zombie",
+    "half": null,
+    "height": null,
+    "walkSpeed": null,
+    "health": null,
+    "drops": [
+      {
+        "item": "mutton",
+        "min": 0,
+        "max": 1
+      },
+      {
+        "item": "iron_sword",
+        "min": 0,
+        "max": 1,
+        "chance": 0.1
+      }
+    ],
+    "goals": []
+  }
+]

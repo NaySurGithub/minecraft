@@ -1,0 +1,17 @@
+[
+  { "shapeless": true, "in": [{ "name": "oak_log", "count": 1 }], "out": { "name": "oak_planks", "count": 4 }, "gridSize": 1 },
+  { "shaped": true, "shape": ["P", "P"], "key": { "P": "oak_planks" }, "out": { "name": "stick", "count": 4 }, "gridSize": 2 },
+  { "shaped": true, "shape": ["PP", "PP"], "key": { "P": "oak_planks" }, "out": { "name": "crafting_table", "count": 1 }, "gridSize": 2 },
+  { "shaped": true, "shape": ["CCC", "C C", "CCC"], "key": { "C": "cobblestone" }, "out": { "name": "furnace", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "raw_iron" }, "out": { "name": "iron_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "coal" }, "out": { "name": "coal_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "raw_copper" }, "out": { "name": "copper_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "raw_gold" }, "out": { "name": "gold_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "lapis_lazuli" }, "out": { "name": "lapis_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "diamond" }, "out": { "name": "diamond_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["OOO", "OOO", "OOO"], "key": { "O": "emerald" }, "out": { "name": "emerald_block", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["III", "I I"], "key": { "I": "iron_ingot" }, "out": { "name": "iron_helmet", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["I I", "III", "III"], "key": { "I": "iron_ingot" }, "out": { "name": "iron_chestplate", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["III", "I I", "I I"], "key": { "I": "iron_ingot" }, "out": { "name": "iron_leggings", "count": 1 }, "gridSize": 3 },
+  { "shaped": true, "shape": ["I I", "I I"], "key": { "I": "iron_ingot" }, "out": { "name": "iron_boots", "count": 1 }, "gridSize": 3 }
+]

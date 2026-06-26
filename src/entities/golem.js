@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { MobIA } from './MobIA.js'
+import { applyMobDefaults } from './mobDefaults.js'
 import { loadMobModel, cloneMobScene } from '../models/mobGltf.js'
 import { DefendVillageGoal } from './goals.js'
 // Vite ?url import — bundler emits the .glb as a hashed static asset URL.
@@ -14,12 +15,8 @@ export class Golem extends MobIA {
   constructor(x, y, z) {
     super(x, y, z)
     this.type = 'golem'
-    this.half = 0.6
-    this.height = 2.9
-    this.walkSpeed = 1.9
+    applyMobDefaults(this, this.type)
     this.jumpVelocity = 6
-    this.maxHealth = 50
-    this.health = this.maxHealth
     this.turnIntervalMin = 1.2
     this.turnIntervalMax = 2.8
     this.idleChance = 0.15

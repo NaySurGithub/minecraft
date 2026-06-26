@@ -1,5 +1,4 @@
-import { CHUNK_SIZE, CHUNK_HEIGHT, SEA_LEVEL } from '../config/constants.js'
-import { NoiseField, makeRng, hashSeed } from './noise.js'
+import { CHUNK_SIZE, CHUNK_HEIGHT, SEA_LEVEL, NoiseField, makeRng, hashSeed } from '../../packages/game-core/src/index.js'
 import { AIR, blockIds, blocks } from '../blocks/registry.js'
 import { DEBUG_GENERATION, debugLog, blockName } from '../debug/debug.js'
 

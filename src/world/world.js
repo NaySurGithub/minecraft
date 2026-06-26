@@ -498,6 +498,11 @@ if (
     chunk.loadVoxels(voxels, levels)
     chunk.dirty = true
     this.indexChunkFires(chunk)
+    if (this.remote) {
+      // Rebuild now so the received terrain shows up immediately.
+      // Neighbor chunks may arrive later and trigger another rebuild.
+      this.rebuildChunk(chunk)
+    }
   }
 
   scheduleFluidTick(wx, wy, wz) {

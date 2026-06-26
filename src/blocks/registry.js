@@ -1,5 +1,6 @@
 import { DEBUG_TEXTURES, debugLog } from '../debug/debug.js'
 import { Block } from './Block.js'
+import { blockDefs } from '../../packages/game-core/src/content.js'
 
 const blocksRoot = globalThis.__nazzandnaycraftBlocks || (globalThis.__nazzandnaycraftBlocks = {
   blocks: [],
@@ -24,9 +25,7 @@ function ensureBlockInstance(entry) {
 }
 
 export function defineBlock(name, props = {}) {
-  if (blocksByName.has(name)) {
-    return editBlock(name, props).id
-  }
+  if (blocksByName.has(name)) return editBlock(name, props).id
   const id = blocksRoot.nextId++
   const block = {
     id,
@@ -65,19 +64,10 @@ export function editBlock(name, props = {}) {
 }
 
 export function loadVanillaBlocks() {
-  const modules = import.meta.glob('./definitions/*.js', { eager: true })
-  const defs = Object.entries(modules)
-    .flatMap(([, mod]) => Array.isArray(mod.default) ? mod.default : [mod.default])
-    .map(ensureBlockInstance)
-    .filter(Boolean)
-    .sort((a, b) => {
-      if (a.name === 'air') return -1
-      if (b.name === 'air') return 1
-      return a.name.localeCompare(b.name)
-    })
-
+  const defs = Array.isArray(blockDefs) ? blockDefs : []
   for (const def of defs) {
-    defineBlock(def.name, def)
+    const entry = ensureBlockInstance(def)
+    if (entry) defineBlock(entry.name, entry)
   }
 }
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { MobIA } from './MobIA.js'
+import { applyMobDefaults } from './mobDefaults.js'
 import { loadMobModel, cloneMobScene } from '../models/mobGltf.js'
 // Vite ?url import — bundler emits the .glb as a hashed static asset URL.
 import villagerGlbUrl from '../models/mobs/villager.glb?url'
@@ -13,11 +14,7 @@ export class Villager extends MobIA {
   constructor(x, y, z) {
     super(x, y, z)
     this.type = 'villager'
-    this.half = 0.34
-    this.height = 1.7
-    this.walkSpeed = 1.05
-    this.maxHealth = 10
-    this.health = this.maxHealth
+    applyMobDefaults(this, this.type)
     this.turnIntervalMin = 2
     this.turnIntervalMax = 5
     this.idleChance = 0.55

@@ -5,8 +5,9 @@ const WebSocket = require('ws');
  * Each client connection is wrapped to look like a peer connection.
  */
 class WebSocketHost {
-  constructor(port) {
+  constructor(port, host = '0.0.0.0') {
     this.port = port;
+    this.host = host;
     this.wss = null;
     this.clients = new Map(); // clientId -> { conn, ws }
     this.nextId = 1;
@@ -20,7 +21,7 @@ class WebSocketHost {
     this.onMessage = onMessage;
     this.onClose = onClose;
 
-    this.wss = new WebSocket.Server({ port: this.port });
+    this.wss = new WebSocket.Server({ port: this.port, host: this.host });
 
     this.wss.on('connection', (ws) => {
       const clientId = 'ws_' + (this.nextId++);
@@ -72,7 +73,7 @@ class WebSocketHost {
       if (this.onConnection) this.onConnection(clientId, conn);
     });
 
-    console.log('WebSocket host listening on port ' + this.port);
+    console.log('WebSocket host listening on ' + this.host + ':' + this.port);
   }
 
   broadcast(msg, excludeId) {

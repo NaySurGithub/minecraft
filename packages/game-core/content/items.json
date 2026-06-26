@@ -1,0 +1,1012 @@
+[
+  {
+    "label": "Arrow",
+    "stackSize": 64,
+    "color": [
+      215,
+      215,
+      200
+    ],
+    "category": "ammo",
+    "id": 4116,
+    "name": "arrow",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Blaze Rod",
+    "color": [
+      235,
+      160,
+      45
+    ],
+    "id": 4110,
+    "name": "blaze_rod",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Bone",
+    "color": [
+      235,
+      235,
+      220
+    ],
+    "id": 4107,
+    "name": "bone",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Bone Meal",
+    "stackSize": 64,
+    "color": [
+      240,
+      240,
+      240
+    ],
+    "id": 4152,
+    "name": "bone_meal",
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Bow",
+    "stackSize": 1,
+    "color": [
+      126,
+      76,
+      38
+    ],
+    "category": "tool",
+    "toolKind": "bow",
+    "maxDurability": 384,
+    "id": 4117,
+    "name": "bow",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Bucket",
+    "stackSize": 16,
+    "color": [
+      176,
+      176,
+      176
+    ],
+    "category": "tool",
+    "toolKind": "bucket",
+    "id": 4118,
+    "name": "bucket",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Carrot",
+    "stackSize": 64,
+    "color": [
+      255,
+      140,
+      0
+    ],
+    "food": 3,
+    "id": 4150,
+    "name": "carrot_item",
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Coal",
+    "color": [
+      35,
+      35,
+      35
+    ],
+    "id": 4098,
+    "name": "coal",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Cooked Mutton",
+    "stackSize": 64,
+    "color": [
+      150,
+      96,
+      60
+    ],
+    "food": 6,
+    "id": 4097,
+    "name": "cooked_mutton",
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Cooked Porkchop",
+    "color": [
+      170,
+      92,
+      58
+    ],
+    "food": 8,
+    "id": 4115,
+    "name": "cooked_porkchop",
+    "stackSize": 64,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond",
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "id": 4104,
+    "name": "diamond",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Boots",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "armor",
+    "armorType": "boots",
+    "defense": 3,
+    "maxDurability": 429,
+    "id": 4147,
+    "name": "diamond_boots",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Chestplate",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "armor",
+    "armorType": "chestplate",
+    "defense": 8,
+    "maxDurability": 528,
+    "id": 4139,
+    "name": "diamond_chestplate",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Helmet",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "armor",
+    "armorType": "helmet",
+    "defense": 3,
+    "maxDurability": 363,
+    "id": 4135,
+    "name": "diamond_helmet",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Hoe",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "tool",
+    "toolKind": "hoe",
+    "maxDurability": 1561,
+    "id": 4158,
+    "name": "diamond_hoe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Leggings",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "armor",
+    "armorType": "leggings",
+    "defense": 6,
+    "maxDurability": 495,
+    "id": 4143,
+    "name": "diamond_leggings",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Pickaxe",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "tool",
+    "toolKind": "pickaxe",
+    "maxDurability": 1561,
+    "id": 4131,
+    "name": "diamond_pickaxe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Diamond Sword",
+    "stackSize": 1,
+    "color": [
+      90,
+      230,
+      230
+    ],
+    "category": "tool",
+    "toolKind": "sword",
+    "maxDurability": 1561,
+    "id": 4126,
+    "name": "diamond_sword",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Emerald",
+    "color": [
+      70,
+      220,
+      110
+    ],
+    "id": 4105,
+    "name": "emerald",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Ender Chest",
+    "stackSize": 64,
+    "color": [
+      35,
+      20,
+      45
+    ],
+    "id": 4148,
+    "name": "ender_chest",
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Ender Pearl",
+    "color": [
+      40,
+      175,
+      145
+    ],
+    "id": 4113,
+    "name": "ender_pearl",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Flint and Steel",
+    "stackSize": 1,
+    "color": [
+      180,
+      180,
+      180
+    ],
+    "category": "tool",
+    "toolKind": "flint_and_steel",
+    "maxDurability": 64,
+    "id": 4121,
+    "name": "flint_and_steel",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Ghast Tear",
+    "color": [
+      230,
+      235,
+      255
+    ],
+    "id": 4109,
+    "name": "ghast_tear",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Golden Boots",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "armor",
+    "armorType": "boots",
+    "defense": 1,
+    "maxDurability": 91,
+    "id": 4145,
+    "name": "golden_boots",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Golden Chestplate",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "armor",
+    "armorType": "chestplate",
+    "defense": 5,
+    "maxDurability": 112,
+    "id": 4137,
+    "name": "golden_chestplate",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Golden Helmet",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "armor",
+    "armorType": "helmet",
+    "defense": 2,
+    "maxDurability": 77,
+    "id": 4133,
+    "name": "golden_helmet",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Golden Hoe",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "tool",
+    "toolKind": "hoe",
+    "maxDurability": 32,
+    "id": 4157,
+    "name": "golden_hoe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Golden Leggings",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "armor",
+    "armorType": "leggings",
+    "defense": 3,
+    "maxDurability": 105,
+    "id": 4141,
+    "name": "golden_leggings",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Golden Pickaxe",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "tool",
+    "toolKind": "pickaxe",
+    "maxDurability": 32,
+    "id": 4130,
+    "name": "golden_pickaxe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Golden Sword",
+    "stackSize": 1,
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "category": "tool",
+    "toolKind": "sword",
+    "maxDurability": 32,
+    "id": 4125,
+    "name": "golden_sword",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Gunpowder",
+    "color": [
+      70,
+      70,
+      70
+    ],
+    "id": 4108,
+    "name": "gunpowder",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Iron Boots",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "armor",
+    "armorType": "boots",
+    "defense": 2,
+    "maxDurability": 195,
+    "id": 4146,
+    "name": "iron_boots",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Iron Chestplate",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "armor",
+    "armorType": "chestplate",
+    "defense": 6,
+    "maxDurability": 240,
+    "id": 4138,
+    "name": "iron_chestplate",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Iron Helmet",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "armor",
+    "armorType": "helmet",
+    "defense": 2,
+    "maxDurability": 165,
+    "id": 4134,
+    "name": "iron_helmet",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Iron Hoe",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "tool",
+    "toolKind": "hoe",
+    "maxDurability": 250,
+    "id": 4156,
+    "name": "iron_hoe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Iron Leggings",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "armor",
+    "armorType": "leggings",
+    "defense": 5,
+    "maxDurability": 225,
+    "id": 4142,
+    "name": "iron_leggings",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Iron Pickaxe",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "tool",
+    "toolKind": "pickaxe",
+    "maxDurability": 250,
+    "id": 4129,
+    "name": "iron_pickaxe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Iron Sword",
+    "stackSize": 1,
+    "color": [
+      210,
+      210,
+      220
+    ],
+    "category": "tool",
+    "toolKind": "sword",
+    "maxDurability": 250,
+    "id": 4124,
+    "name": "iron_sword",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Lapis Lazuli",
+    "color": [
+      58,
+      86,
+      210
+    ],
+    "id": 4103,
+    "name": "lapis_lazuli",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Lava Bucket",
+    "stackSize": 1,
+    "color": [
+      235,
+      110,
+      20
+    ],
+    "category": "tool",
+    "toolKind": "bucket",
+    "id": 4120,
+    "name": "lava_bucket",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Leather Boots",
+    "stackSize": 1,
+    "color": [
+      160,
+      101,
+      64
+    ],
+    "category": "armor",
+    "armorType": "boots",
+    "defense": 1,
+    "maxDurability": 65,
+    "id": 4144,
+    "name": "leather_boots",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Leather Chestplate",
+    "stackSize": 1,
+    "color": [
+      160,
+      101,
+      64
+    ],
+    "category": "armor",
+    "armorType": "chestplate",
+    "defense": 3,
+    "maxDurability": 80,
+    "id": 4136,
+    "name": "leather_chestplate",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Leather Helmet",
+    "stackSize": 1,
+    "color": [
+      160,
+      101,
+      64
+    ],
+    "category": "armor",
+    "armorType": "helmet",
+    "defense": 1,
+    "maxDurability": 55,
+    "id": 4132,
+    "name": "leather_helmet",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Leather Leggings",
+    "stackSize": 1,
+    "color": [
+      160,
+      101,
+      64
+    ],
+    "category": "armor",
+    "armorType": "leggings",
+    "defense": 2,
+    "maxDurability": 75,
+    "id": 4140,
+    "name": "leather_leggings",
+    "food": 0,
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Magma Cream",
+    "color": [
+      220,
+      96,
+      58
+    ],
+    "id": 4111,
+    "name": "magma_cream",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Raw Mutton",
+    "stackSize": 64,
+    "color": [
+      224,
+      122,
+      110
+    ],
+    "food": 2,
+    "id": 4096,
+    "name": "mutton",
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Raw Porkchop",
+    "color": [
+      232,
+      134,
+      136
+    ],
+    "food": 3,
+    "id": 4114,
+    "name": "porkchop",
+    "stackSize": 64,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Potato",
+    "stackSize": 64,
+    "color": [
+      200,
+      180,
+      100
+    ],
+    "food": 1,
+    "id": 4151,
+    "name": "potato_item",
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Raw Copper",
+    "color": [
+      210,
+      126,
+      82
+    ],
+    "id": 4099,
+    "name": "raw_copper",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Raw Gold",
+    "color": [
+      246,
+      202,
+      74
+    ],
+    "id": 4101,
+    "name": "raw_gold",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Raw Iron",
+    "color": [
+      210,
+      170,
+      135
+    ],
+    "id": 4100,
+    "name": "raw_iron",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Redstone",
+    "color": [
+      210,
+      42,
+      42
+    ],
+    "id": 4102,
+    "name": "redstone",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Stick",
+    "color": [
+      155,
+      112,
+      65
+    ],
+    "id": 4106,
+    "name": "stick",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Stone Hoe",
+    "stackSize": 1,
+    "color": [
+      120,
+      120,
+      126
+    ],
+    "category": "tool",
+    "toolKind": "hoe",
+    "maxDurability": 131,
+    "id": 4155,
+    "name": "stone_hoe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Stone Pickaxe",
+    "stackSize": 1,
+    "color": [
+      120,
+      120,
+      126
+    ],
+    "category": "tool",
+    "toolKind": "pickaxe",
+    "maxDurability": 131,
+    "id": 4128,
+    "name": "stone_pickaxe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Stone Sword",
+    "stackSize": 1,
+    "color": [
+      120,
+      120,
+      126
+    ],
+    "category": "tool",
+    "toolKind": "sword",
+    "maxDurability": 131,
+    "id": 4123,
+    "name": "stone_sword",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Water Bucket",
+    "stackSize": 1,
+    "color": [
+      60,
+      110,
+      200
+    ],
+    "category": "tool",
+    "toolKind": "bucket",
+    "id": 4119,
+    "name": "water_bucket",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Wheat",
+    "stackSize": 64,
+    "color": [
+      220,
+      200,
+      100
+    ],
+    "id": 4153,
+    "name": "wheat",
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Wheat Seeds",
+    "stackSize": 64,
+    "color": [
+      180,
+      160,
+      100
+    ],
+    "id": 4149,
+    "name": "wheat_seeds",
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Wither Skeleton Skull",
+    "color": [
+      36,
+      36,
+      40
+    ],
+    "id": 4112,
+    "name": "wither_skeleton_skull",
+    "stackSize": 64,
+    "food": 0,
+    "category": "item",
+    "toolKind": null,
+    "isItem": true
+  },
+  {
+    "label": "Wooden Hoe",
+    "stackSize": 1,
+    "color": [
+      150,
+      105,
+      58
+    ],
+    "category": "tool",
+    "toolKind": "hoe",
+    "maxDurability": 59,
+    "id": 4154,
+    "name": "wooden_hoe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Wooden Pickaxe",
+    "stackSize": 1,
+    "color": [
+      150,
+      105,
+      58
+    ],
+    "category": "tool",
+    "toolKind": "pickaxe",
+    "maxDurability": 59,
+    "id": 4127,
+    "name": "wooden_pickaxe",
+    "food": 0,
+    "isItem": true
+  },
+  {
+    "label": "Wooden Sword",
+    "stackSize": 1,
+    "color": [
+      150,
+      105,
+      58
+    ],
+    "category": "tool",
+    "toolKind": "sword",
+    "maxDurability": 59,
+    "id": 4122,
+    "name": "wooden_sword",
+    "food": 0,
+    "isItem": true
+  }
+]

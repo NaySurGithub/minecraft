@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { MobIA } from './MobIA.js'
+import { applyMobDefaults } from './mobDefaults.js'
 import { daylightFactor } from '../world/dayNightCycle.js'
 import { defineItem, getThingByName } from '../items/itemRegistry.js'
 import { loadMobModel, cloneMobScene } from '../models/mobGltf.js'
@@ -22,11 +23,7 @@ export class Zombie extends MobIA {
   constructor(x, y, z) {
     super(x, y, z)
     this.type = 'zombie'
-    this.half = 0.35
-    this.height = 1.8
-    this.walkSpeed = 1.25
-    this.maxHealth = 20
-    this.health = this.maxHealth
+    applyMobDefaults(this, this.type)
     this.turnIntervalMin = 1.2
     this.turnIntervalMax = 3.5
     this.idleChance = 0.2

@@ -1,0 +1,11 @@
+{
+  "name": "@nazza/game-core",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js",
+      "require": "./index.cjs"
+    }
+  }
+}

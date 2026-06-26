@@ -16,5 +16,10 @@
   "dependencies": {
     "ws": "^8.14.0",
     "uuid": "^9.0.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^11.10.0",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.17.1"
   }
 }

@@ -19,6 +19,8 @@ export class DedicatedClientSession {
     this.chunkWaiters = []
     this.chunkRequestTimer = 0
     this.onStatus = options.onStatus || null
+    this.connectionFailed = false
+    this.disconnected = false
     this.welcome = new Promise((resolve) => { this._resolveWelcome = resolve })
     this.handlers = this.createHandlers()
     this.connect()
@@ -30,7 +32,9 @@ export class DedicatedClientSession {
     try {
       this.ws = new WebSocket(url)
     } catch (error) {
+      this.connectionFailed = true
       this._status('error', error)
+      this._resolveWelcome?.(null)
       return
     }
 
@@ -56,13 +60,18 @@ export class DedicatedClientSession {
 
     this.ws.onclose = () => {
       this.connected = false
+      this.disconnected = true
       this._status('disconnected', null)
+      if (!this.id) this.connectionFailed = true
+      if (!this.id) this._resolveWelcome?.(null)
       this.context.onDisconnect?.()
     }
 
     this.ws.onerror = (error) => {
       console.error('WebSocket error:', error)
+      this.connectionFailed = true
       this._status('error', error)
+      this._resolveWelcome?.(null)
     }
   }
 
@@ -240,10 +249,10 @@ export class DedicatedClientSession {
 
   update(dt = 0) {
     const player = this.context.player
-    if (!player || !this.connected) return
+    if (!player || !this.connected || this.disconnected) return
     
     this.chunkRequestTimer += dt
-    if (this.chunkRequestTimer >= 1) {
+    if (this.chunkRequestTimer >= 0.25) {
       this.chunkRequestTimer = 0
       this.requestNearbyChunks(player)
     }
@@ -270,7 +279,7 @@ export class DedicatedClientSession {
     if (!world) return
     const pcx = Math.floor(player.position.x / CHUNK_SIZE)
     const pcz = Math.floor(player.position.z / CHUNK_SIZE)
-    const rd = Math.min(world.renderDistance || 4, 4)
+    const rd = Math.min((world.renderDistance || 4) + 1, 8)
     const visible = []
     for (let dz = -rd; dz <= rd; dz++) {
       for (let dx = -rd; dx <= rd; dx++) {
@@ -312,13 +321,30 @@ export class DedicatedClientSession {
       const waiter = {
         coords,
         onProgress,
-        resolve: () => {
+        retries: 0,
+        resolved: false,
+        resolve: (ok) => {
+          if (waiter.resolved) return
+          waiter.resolved = true
           clearTimeout(waiter.timeout)
-          resolve()
+          clearInterval(waiter.retryTimer)
+          resolve(ok)
         },
         timeout: null
       }
-      waiter.timeout = setTimeout(waiter.resolve, timeoutMs)
+      waiter.retryTimer = setInterval(() => {
+        if (this.disconnected) {
+          waiter.resolve(false)
+          return
+        }
+        waiter.retries++
+        for (const c of waiter.coords) {
+          const key = this.chunkKey(c.cx, c.cz)
+          if (!this.receivedChunks.has(key)) this.requestChunk(c.cx, c.cz)
+        }
+        this.flushChunkWaiters()
+      }, 350)
+      waiter.timeout = setTimeout(() => waiter.resolve(false), timeoutMs)
       this.chunkWaiters.push(waiter)
       this.flushChunkWaiters()
     })
@@ -334,7 +360,10 @@ export class DedicatedClientSession {
       if (waiter.onProgress) waiter.onProgress(done, waiter.coords.length)
       if (done >= waiter.coords.length) {
         this.chunkWaiters.splice(i, 1)
-        waiter.resolve()
+        waiter.resolve(true)
+      } else if (waiter.retries > 0 && done === 0 && waiter.retries >= 3) {
+        this.chunkWaiters.splice(i, 1)
+        waiter.resolve(false)
       }
     }
   }

@@ -17,8 +17,12 @@ class Config {
   defaults() {
     return {
       port: 25565,
+      bindHost: '0.0.0.0',
       maxPlayers: 20,
       worldName: 'world',
+      worldStorage: 'folder',
+      worldPath: '',
+      opOnlyGamemode: true,
       gamemode: 'survival',
       difficulty: 'normal',
       pvp: true,

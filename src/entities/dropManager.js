@@ -113,6 +113,10 @@ export class DropManager {
       }
 
       if (this.canPickup && !d.dead && this.inventory && d.canPickup(playerPos)) {
+        if (this.onPickupRequest) {
+          this.onPickupRequest(d)
+          continue
+        }
         const leftover = this.inventory.addItem(d.blockId, d.count)
         if (leftover < d.count) {
           const pickedUp = d.count - leftover

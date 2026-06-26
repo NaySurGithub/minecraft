@@ -76,6 +76,13 @@ async function startGame(meta, savedData, netOptions = null) {
   player.hotbar = hotbar
   player.inventory = inventory
   dropManager = new DropManager(scene, world, atlas, material, inventory)
+  if (multiplayerMode === 'client' || multiplayerMode === 'dedicated') {
+    dropManager.canPickup = true
+    dropManager.onPickupRequest = (drop) => {
+      const send = netSession?.send || netSession?.connection?.send
+      send?.call(netSession?.send ? netSession : netSession?.connection, { t: MSG.PICKUP_REQUEST, dropId: drop.id })
+    }
+  }
   dropManager.onPickup = recordItemPickupAchievement
   mobManager = new MobManager(scene, world, dropManager)
   arrowManager = new ArrowManager(scene, world)
@@ -267,6 +274,13 @@ health.onChange((h) => {
         if (type === 'error') multiplayerStatus = t('multiplayerError') + ': ' + describeNetError(value)
       }
     })
+    if (netSession.failed) {
+      loader.showError('Host creation failed.', 'Return', () => {
+        loader.hide()
+        menu.showMain(menuCallbacks)
+      })
+      return
+    }
     multiplayerStatus = t('hostingRoom') + netSession.roomCode
   } else if (netOptions?.mode === 'client') {
     netSession = new ClientSession(multiplayerContext(), netOptions.roomCode, {
@@ -308,17 +322,52 @@ health.onChange((h) => {
     touchControls.invertY = settings.controls.invertY
   }
   emitModEvent(new JoinEvent({ worldId: activeWorldMeta.id, mode: multiplayerMode }), { player, inventory, health, world })
-  const spawnRadius = Math.min(world.renderDistance, 4)
+  const spawnRadius = Math.min(world.renderDistance, 8)
   const loader = new SpawnLoader(app)
   loader.show('Loading world...')
   if (multiplayerMode === 'client' && netSession) {
-    const remoteRadius = Math.min(spawnRadius, 2)
+    const remoteRadius = Math.min(spawnRadius, 5)
     loader.buildGrid(remoteRadius * 2 + 1)
     multiplayerStatus = t('joiningRoom') + netOptions.roomCode
     if (netSession.welcome) await netSession.welcome
-    await netSession.waitForChunksAround(player, remoteRadius, (done, total) => {
+    if (netSession.connectionFailed || !netSession.connected || netSession.disconnected) {
+      loader.showError('Connection lost or host is offline.', 'Return', () => {
+        loader.hide()
+        menu.showMain(menuCallbacks)
+      })
+      return
+    }
+    const ok = await netSession.waitForChunksAround(player, remoteRadius, (done, total) => {
       loader.setProgress(done, total, 'Loading host world...')
-    })
+    }, 6000)
+    if (!ok) {
+      loader.showError('Host world failed to load. Server offline or connection lost.', 'Return', () => {
+        loader.hide()
+        menu.showMain(menuCallbacks)
+      })
+      return
+    }
+  } else if (netOptions?.mode === 'dedicated' && netSession) {
+    if (netSession.welcome) await netSession.welcome
+    if (netSession.connectionFailed || !netSession.connected || netSession.disconnected) {
+      loader.showError('The server is offline or unreachable.', 'Return', () => {
+        loader.hide()
+        menu.showMain(menuCallbacks)
+      })
+      return
+    }
+    const remoteRadius = Math.min(spawnRadius, 5)
+    loader.buildGrid(remoteRadius * 2 + 1)
+    const ok = await netSession.waitForChunksAround(player, remoteRadius, (done, total) => {
+      loader.setProgress(done, total, 'Loading host world...')
+    }, 6000)
+    if (!ok) {
+      loader.showError('Host world failed to load. Server offline or connection lost.', 'Return', () => {
+        loader.hide()
+        menu.showMain(menuCallbacks)
+      })
+      return
+    }
   } else {
     loader.buildGrid(spawnRadius * 2 + 1)
     const spawnChunk = chunkCoordsForPosition(player.position)
@@ -402,4 +451,3 @@ health.onChange((h) => {
   }
   saveActiveWorld()
 }
-

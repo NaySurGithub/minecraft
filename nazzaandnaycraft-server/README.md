@@ -37,6 +37,8 @@ Create a `server.json` file:
   "port": 25565,
   "maxPlayers": 20,
   "worldName": "world",
+  "worldStorage": "folder",
+  "worldPath": "",
   "gamemode": "survival",
   "difficulty": "normal",
   "pvp": true,

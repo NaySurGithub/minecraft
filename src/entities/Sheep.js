@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { MobIA } from './MobIA.js'
+import { applyMobDefaults } from './mobDefaults.js'
 
 const BODY_COLOR = 0xece5da
 const FACE_COLOR = 0xd9c3a8
@@ -25,13 +26,9 @@ export class Sheep extends MobIA {
   constructor(x, y, z) {
     super(x, y, z)
     this.type = 'sheep'
-    this.half = 0.45
-    this.height = 1.3
-    this.walkSpeed = 1.6
+    applyMobDefaults(this, this.type)
     this.jumpVelocity = 7.5
     this.stepHeight = 1.0
-    this.maxHealth = 8
-    this.health = this.maxHealth
     this.idleChance = 0.35
     this.turnIntervalMin = 2.5
     this.turnIntervalMax = 6.0

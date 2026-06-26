@@ -20,6 +20,7 @@ const PING_TIMEOUT_MS = 5000
 function pingServer(address, port) {
   return new Promise((resolve) => {
     let settled = false
+    let gotResponse = false
     const startTime = Date.now()
     const done = (result) => {
       if (settled) return
@@ -52,6 +53,7 @@ function pingServer(address, port) {
       try {
         const msg = JSON.parse(event.data)
         if (msg.t === MSG.STATUS_RESPONSE) {
+          gotResponse = true
           done({
             online: true,
             version: String(msg.version || '?'),
@@ -69,7 +71,9 @@ function pingServer(address, port) {
     }
 
     ws.onerror = () => done(null)
-    ws.onclose = () => done(null)
+    ws.onclose = () => {
+      if (!gotResponse) done(null)
+    }
   })
 }
 
@@ -382,7 +386,8 @@ export class ServerBrowser {
   }
 
   async refreshServers(callbacks) {
-    // Just delegate to pingAllServers which manages the _pinging flag
+    // Reset the pinging flag so pingAllServers can run
+    this._pinging = false
     await this.pingAllServers()
   }
 

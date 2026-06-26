@@ -109,4 +109,36 @@ export class SpawnLoader {
     this.cells = []
     this.gridSize = 0
   }
+
+  showError(message, buttonLabel = 'Return', onButton = null) {
+    if (this.overlay) this.hide()
+    const overlay = document.createElement('div')
+    overlay.className = 'spawn-loader spawn-loader-error'
+    overlay.setAttribute('role', 'dialog')
+    overlay.setAttribute('aria-modal', 'true')
+    const panel = document.createElement('div')
+    panel.className = 'spawn-loader-panel'
+    const title = document.createElement('h2')
+    title.className = 'spawn-loader-status'
+    title.textContent = 'Connection error'
+    const text = document.createElement('p')
+    text.className = 'spawn-loader-percent'
+    text.textContent = message || 'Server offline or unreachable.'
+    const btn = document.createElement('button')
+    btn.className = 'mc-menu-btn'
+    btn.type = 'button'
+    btn.textContent = buttonLabel
+    btn.onclick = () => onButton?.()
+    panel.appendChild(title)
+    panel.appendChild(text)
+    panel.appendChild(btn)
+    overlay.appendChild(panel)
+    this.parent.appendChild(overlay)
+    this.overlay = overlay
+    this.statusEl = title
+    this.percentEl = text
+    this.gridEl = null
+    this.cells = []
+    this.gridSize = 0
+  }
 }

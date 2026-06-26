@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { MobIA } from './MobIA.js'
+import { applyMobDefaults } from './mobDefaults.js'
 import { loadMobModel, cloneMobScene } from '../models/mobGltf.js'
 import { AIR, blocks } from '../blocks/registry.js'
 import creeperGlbUrl from '../models/mobs/creeper.glb?url'
@@ -13,11 +14,7 @@ export class Creeper extends MobIA {
   constructor(x, y, z) {
     super(x, y, z)
     this.type = 'creeper'
-    this.half = 0.15
-    this.height = 0.85
-    this.walkSpeed = 1.1
-    this.maxHealth = 20
-    this.health = this.maxHealth
+    applyMobDefaults(this, this.type)
     this.turnIntervalMin = 1.5
     this.turnIntervalMax = 4.0
     this.idleChance = 0.3

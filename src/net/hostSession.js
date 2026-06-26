@@ -98,6 +98,7 @@ export class HostSession {
   }
 
   _handleError(err) {
+    this.failed = true
     if (!this.lockRoomCode && err?.type === 'unavailable-id' && this.retryCount < 5) {
       this.retryCount++
       try { this.session?.destroy() } catch (e) {}
@@ -188,6 +189,7 @@ export class HostSession {
       [MSG.BREAK_RAY]: (_client, msg) => this.breakRay(msg.eye, msg.dir),
       [MSG.PLACE]: (_client, msg) => this.placeBlock(msg.x, msg.y, msg.z, msg.id),
       [MSG.TOSS]: (_client, msg) => this.tossItem(msg),
+      [MSG.PICKUP_REQUEST]: (client, msg) => this.pickupDrop(client, msg.dropId),
       [MSG.CHAT]: (client, msg) => {
         const text = String(msg.text || '').slice(0, 180)
         this.broadcast({ t: MSG.CHAT, name: client.name || 'Player', text })
@@ -528,6 +530,20 @@ export class HostSession {
       drop.velocity.set(msg.velocity.x || 0, msg.velocity.y || 0, msg.velocity.z || 0)
     }
     drop.pickupDelay = 0.8
+    return true
+  }
+
+  pickupDrop(client, dropId) {
+    if (!dropId || !this.context.dropManager) return false
+    const drop = this.context.dropManager.drops.find((d) => d.id === dropId)
+    if (!drop || drop.dead || drop.pickupDelay > 0) return false
+    const player = client?.state?.player || (client?.id === 'host' ? this.context.player : null)
+    if (!player) return false
+    if (!drop.canPickup(player)) return false
+    const leftover = this.context.inventory?.addItem(drop.blockId, drop.count)
+    if (leftover >= drop.count) return false
+    drop.count = leftover
+    if (leftover <= 0) drop.dead = true
     return true
   }
 
